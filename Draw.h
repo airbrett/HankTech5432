@@ -1,21 +1,19 @@
 #pragma once
 #include "Thing.h"
-#include "Instance.h"
+#include "WindowHandler.h"
 
-#include <SDL.h>
-
+#include <memory>
 #include <vector>
 
 class Draw
 {
 private:
-	Instance* mInst;
 	std::vector<Thing*>* mThings;
-	SDL_Window* mWnd;
 	SDL_GLContext mCtx;
 
+
 public:
-	Draw(Instance* Inst);
+	Draw(std::shared_ptr<WindowHandler> Window);
 	void Init();
-	void Update();
+	void Update(Thing* Camera, std::vector<Thing*>* Things);
 };

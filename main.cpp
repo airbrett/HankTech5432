@@ -3,20 +3,23 @@
 #include "Draw.h"
 #include "Physics.h"
 #include "RAM.h"
-#include "User.h"
 #include "Player.h"
+#include "WindowHandler.h"
 
 #include <array>
 #include <vector>
 
 int main(char* argv[], int argc)
 {
-	Instance Inst;
+	std::shared_ptr<Instance> Inst = std::make_shared<Instance>();
 
-	Draw Drawer(&Inst);
-	Physics Physicser(&Inst.Things);
-	RAM Rammer(&Inst.Things);
-	User Blerg(&Inst.Keys);
+	std::shared_ptr<WindowHandler> Window = std::make_shared<WindowHandler>();
+	std::shared_ptr<Draw> Drawer = std::make_shared<Draw>(Window);
+	Physics Physicser(&Inst->Things);
+	RAM Rammer(&Inst->Things);
+
+	Inst->Drawerizor = Drawer;
+	Inst->Window = Window;
 
 	Thing* A = Rammer.Rez<Thing>();
 
@@ -28,24 +31,26 @@ int main(char* argv[], int argc)
 
 	Player* Plr = Rammer.Rez<Player>();
 
-	Plr->Init(&Inst);
+	Plr->Init(Window);
 	Plr->SetPos(0.0, 0.0, -20);
 
-	Inst.Camera = Plr;
+	Inst->Camera = Plr;
 
 	Uint32 Time = SDL_GetTicks();
 
-	while (true)
+	while (!Window->KeyDown(27))
 	{
 		const float Now = (SDL_GetTicks() - Time) / 1000.0f;
 
-		for (Thing* T : Inst.Things)
+		for (Thing* T : Inst->Things)
 			T->Update(Now);
 
+		Window->Update();
 		Physicser.Update();
-		Drawer.Update();
+		Drawer->Update(Plr, &Inst->Things);
+		Inst->Window->Swap();
 		Rammer.Update();
-		Blerg.Update();
+		
 
 		SDL_Delay(10);
 	}

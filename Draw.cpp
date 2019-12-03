@@ -45,12 +45,9 @@ static const GLfloat g_vertex_buffer_data[] = {
 	1.0f,-1.0f, 1.0f
 };
 
-Draw::Draw(Instance* Inst) :
-	mInst(Inst)
+Draw::Draw(std::shared_ptr<WindowHandler> Window)
 {
-	SDL_Init(SDL_INIT_VIDEO);
-	mWnd = SDL_CreateWindow("Do what now?", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
-	mCtx = SDL_GL_CreateContext(mWnd);
+	mCtx = SDL_GL_CreateContext(Window->GetHandle());
 
 	glewInit();
 
@@ -65,13 +62,13 @@ void Draw::Init()
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Draw::Update()
+void Draw::Update(Thing* Camera, std::vector<Thing*>* Things)
 {
-	const glm::vec3 CameraLook = mInst->Camera->Transform({ 0.0f, 0.0f, 1.0f });
+	const glm::vec3 CameraLook = Camera->Transform({ 0.0f, 0.0f, 1.0f });
 	const glm::vec3 CameraUp(0.0, 1.0, 0.0);
 
 	const glm::mat4 Projection = glm::perspective(glm::radians(30.0f), static_cast<float>(640) / 480, 0.1f, 1000.0f);
-	const glm::mat4 View = glm::lookAt(mInst->Camera->GetPos(), CameraLook, CameraUp);
+	const glm::mat4 View = glm::lookAt(Camera->GetPos(), CameraLook, CameraUp);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(glm::value_ptr(Projection));
@@ -81,7 +78,7 @@ void Draw::Update()
 
 	glColor3f(0.0f, 1.0f, 0.0f);
 
-	for (Thing* T : mInst->Things)
+	for (Thing* T : *Things)
 	{
 		if (T->DoDraw())
 		{
@@ -91,5 +88,6 @@ void Draw::Update()
 		}
 	}
 
-	SDL_GL_SwapWindow(mWnd);
+	
 }
+

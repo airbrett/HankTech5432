@@ -24,8 +24,8 @@ add_executable(Async
 	StaticThing.cpp
 	Thing.h
 	Thing.cpp
-	User.h
-	User.cpp
+	WindowHandler.h
+	WindowHandler.cpp
 )
 
 target_compile_definitions(Async

@@ -5,27 +5,30 @@ Player::Player()
 	Draw = false;
 }
 
-void Player::Init(Instance* Inst)
+void Player::Init(std::shared_ptr<WindowHandler>& Inst)
 {
-	mInst = Inst;
+	mWnd = Inst;
+
+	MouseX = mWnd->MouseX();
+	MouseY = mWnd->MouseY();
 }
 
 void Player::Update(const float dt)
 {
 	const float SPD = 0.15f;
 
-	if (mInst->Keys['w'])
+	if (mWnd->KeyDown('w'))
 		Move({ 0,0,SPD*dt });
-	if (mInst->Keys['s'])
+	if (mWnd->KeyDown('s'))
 		Move({ 0,0,-SPD*dt });
 
-	if (mInst->Keys['a'])
+	if (mWnd->KeyDown('a'))
 		Move({ SPD*dt,0,0 });
-	if (mInst->Keys['d'])
+	if (mWnd->KeyDown('d'))
 		Move({ -SPD*dt,0,0 });
 
-	if (mInst->Keys['q'])
-		Turn({ 0,SPD*dt,0.0f });
-	if (mInst->Keys['e'])
-		Turn({ 0,-SPD*dt,0.0f });
+
+	const int32_t Mx = 640 / 2- mWnd->MouseX();
+	Turn({ 0,Mx*0.1f*dt,0.0f });
+	mWnd->MouseSetPos(640 / 2, 480 / 2);
 }

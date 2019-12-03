@@ -1,15 +1,20 @@
 #pragma once
-#include "Instance.h"
+#include "Thing.h"
+#include "WindowHandler.h"
+
+#include <memory>
 
 class Player : public Thing
 {
 private:
-	Instance* mInst;
+	std::shared_ptr<WindowHandler> mWnd;
+	int32_t MouseX;
+	int32_t MouseY;
 
 public:
 	Player();
 
-	void Init(Instance* Inst);
+	void Init(std::shared_ptr<WindowHandler>& Inst);
 
 	virtual void Update(const float dt);
 };
