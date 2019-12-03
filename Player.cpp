@@ -28,7 +28,11 @@ void Player::Update(const float dt)
 		Move({ -SPD*dt,0,0 });
 
 
-	const int32_t Mx = 640 / 2- mWnd->MouseX();
+	const int32_t Mx = mWnd->Width() / 2 - mWnd->MouseX();
+	const int32_t My = mWnd->MouseY() - mWnd->Height() / 2;
+
 	Turn({ 0,Mx*0.1f*dt,0.0f });
-	mWnd->MouseSetPos(640 / 2, 480 / 2);
+	Turn({ My*0.1f*dt,0.0f,0.0f });
+
+	mWnd->MouseSetPos(mWnd->Width() / 2, mWnd->Height() / 2);
 }

@@ -39,6 +39,22 @@ SDL_Window* WindowHandler::GetHandle()
 	return mWnd;
 }
 
+int WindowHandler::Width()
+{
+	int W;
+	SDL_GetWindowSize(mWnd, &W, nullptr);
+
+	return W;
+}
+
+int WindowHandler::Height()
+{
+	int H;
+	SDL_GetWindowSize(mWnd, nullptr, &H);
+
+	return H;
+}
+
 void WindowHandler::Swap()
 {
 	SDL_GL_SwapWindow(mWnd);
@@ -49,12 +65,12 @@ bool WindowHandler::KeyDown(const uint8_t AsciiCode)
 	return mKeys[AsciiCode] != 0;
 }
 
-int32_t WindowHandler::MouseX()
+int WindowHandler::MouseX()
 {
 	return mMouseX;
 }
 
-int32_t WindowHandler::MouseY()
+int WindowHandler::MouseY()
 {
 	return mMouseY;
 }
