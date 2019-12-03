@@ -5,9 +5,9 @@ Player::Player()
 	Draw = false;
 }
 
-void Player::Init(std::shared_ptr<WindowHandler>& Inst)
+void Player::Init(std::shared_ptr<WindowHandler>& Wnd)
 {
-	mWnd = Inst;
+	mWnd = Wnd;
 
 	MouseX = mWnd->MouseX();
 	MouseY = mWnd->MouseY();

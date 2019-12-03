@@ -14,7 +14,7 @@ private:
 public:
 	Player();
 
-	void Init(std::shared_ptr<WindowHandler>& Inst);
+	void Init(std::shared_ptr<WindowHandler>& Wnd);
 
 	virtual void Update(const float dt);
 };
