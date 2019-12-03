@@ -1,6 +1,6 @@
 #include "Thing.h"
 #include "Instance.h"
-#include "Draw.h"
+#include "Context.h"
 #include "Physics.h"
 #include "RAM.h"
 #include "Player.h"
@@ -14,11 +14,10 @@ int main(char* argv[], int argc)
 	std::shared_ptr<Instance> Inst = std::make_shared<Instance>();
 
 	std::shared_ptr<WindowHandler> Window = std::make_shared<WindowHandler>();
-	std::shared_ptr<Draw> Drawer = std::make_shared<Draw>(Window);
+	std::shared_ptr<Context> Ctx = std::make_shared<Context>(Window);
 	Physics Physicser(&Inst->Things);
 	RAM Rammer(&Inst->Things);
 
-	Inst->Drawerizor = Drawer;
 	Inst->Window = Window;
 
 	Thing* A = Rammer.Rez<Thing>();
@@ -47,7 +46,7 @@ int main(char* argv[], int argc)
 
 		Window->Update();
 		Physicser.Update();
-		Drawer->Update(Plr, &Inst->Things);
+		Ctx->Update(Plr, &Inst->Things);
 		Inst->Window->Swap();
 		Rammer.Update();
 		

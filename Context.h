@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-class Draw
+class Context
 {
 private:
 	std::vector<Thing*>* mThings;
@@ -13,7 +13,7 @@ private:
 
 
 public:
-	Draw(std::shared_ptr<WindowHandler> Window);
+	Context(std::shared_ptr<WindowHandler> Window);
 	void Init();
 	void Update(Thing* Camera, std::vector<Thing*>* Things);
 };

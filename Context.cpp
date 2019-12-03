@@ -1,4 +1,4 @@
-#include "Draw.h"
+#include "Context.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -45,7 +45,7 @@ static const GLfloat g_vertex_buffer_data[] = {
 	1.0f,-1.0f, 1.0f
 };
 
-Draw::Draw(std::shared_ptr<WindowHandler> Window)
+Context::Context(std::shared_ptr<WindowHandler> Window)
 {
 	mCtx = SDL_GL_CreateContext(Window->GetHandle());
 
@@ -54,7 +54,7 @@ Draw::Draw(std::shared_ptr<WindowHandler> Window)
 	Init();
 }
 
-void Draw::Init()
+void Context::Init()
 {
 	
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -62,7 +62,7 @@ void Draw::Init()
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Draw::Update(Thing* Camera, std::vector<Thing*>* Things)
+void Context::Update(Thing* Camera, std::vector<Thing*>* Things)
 {
 	const glm::vec3 CameraLook = Camera->Transform({ 0.0f, 0.0f, 1.0f });
 	const glm::vec3 CameraUp(0.0, 1.0, 0.0);

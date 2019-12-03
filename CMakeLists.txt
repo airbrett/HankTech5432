@@ -10,8 +10,8 @@ add_subdirectory(${GLEW_LISTS_DIR} glew)
 find_package(OpenGL REQUIRED)
 
 add_executable(Async
-	Draw.h
-	Draw.cpp
+	Context.h
+	Context.cpp
 	Instance.h
 	main.cpp
 	Physics.h

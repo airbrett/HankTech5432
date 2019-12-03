@@ -12,7 +12,6 @@ struct Instance
 {
 	std::vector<Thing*> Things;
 	std::array<uint8_t, 255> Keys;
-	std::shared_ptr<Draw> Drawerizor;
 	std::shared_ptr<WindowHandler> Window;
 	
 	Thing* Camera;
