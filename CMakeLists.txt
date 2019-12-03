@@ -4,8 +4,9 @@ project(Async)
 
 add_definitions(-DGLEW_STATIC)
 
-add_subdirectory(${SDL2_LISTS_DIR} SDL2)
-add_subdirectory(${GLEW_LISTS_DIR} glew)
+add_subdirectory(${SDL2_LIST_DIR} SDL2)
+add_subdirectory(${GLEW_LIST_DIR} glew)
+add_subdirectory(${BOX2D_LIST_DIR} Box2D)
 
 find_package(OpenGL REQUIRED)
 
@@ -37,11 +38,12 @@ target_compile_definitions(Async
 )
 
 target_include_directories(Async PUBLIC
-	${GLM_DIR}
+	${GLM_SRC_DIR}
 )
 
 target_link_libraries(Async
 	SDL2
 	glew
+	Box2D
 	${OPENGL_LIBRARIES}
 )

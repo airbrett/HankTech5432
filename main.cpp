@@ -39,13 +39,13 @@ int main(char* argv[], int argc)
 
 	while (!Window->KeyDown(27))
 	{
-		const float Now = (SDL_GetTicks() - Time) / 1000.0f;
+		const float dt = (SDL_GetTicks() - Time) / 1000.0f;
 
 		for (Thing* T : Inst->Things)
-			T->Update(Now);
+			T->Update(dt);
 
 		Window->Update();
-		Physicser.Update();
+		Physicser.Update(dt);
 		Ctx->Update(Plr, &Inst->Things);
 		Inst->Window->Swap();
 		Rammer.Update();
