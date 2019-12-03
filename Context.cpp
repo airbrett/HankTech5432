@@ -45,7 +45,8 @@ static const GLfloat g_vertex_buffer_data[] = {
 	1.0f,-1.0f, 1.0f
 };
 
-Context::Context(std::shared_ptr<WindowHandler> Window)
+Context::Context(std::shared_ptr<WindowHandler> Window) :
+	mWnd(Window)
 {
 	mCtx = SDL_GL_CreateContext(Window->GetHandle());
 
@@ -56,7 +57,6 @@ Context::Context(std::shared_ptr<WindowHandler> Window)
 
 void Context::Init()
 {
-	
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, g_vertex_buffer_data);
 	glEnable(GL_DEPTH_TEST);
@@ -67,7 +67,7 @@ void Context::Update(Thing* Camera, std::vector<Thing*>* Things)
 	const glm::vec3 CameraLook = Camera->Transform({ 0.0f, 0.0f, 1.0f });
 	const glm::vec3 CameraUp(0.0, 1.0, 0.0);
 
-	const glm::mat4 Projection = glm::perspective(glm::radians(30.0f), static_cast<float>(640) / 480, 0.1f, 1000.0f);
+	const glm::mat4 Projection = glm::perspective(glm::radians(30.0f), static_cast<float>(mWnd->Width()) / mWnd->Height(), 0.1f, 1000.0f);
 	const glm::mat4 View = glm::lookAt(Camera->GetPos(), CameraLook, CameraUp);
 
 	glMatrixMode(GL_PROJECTION);

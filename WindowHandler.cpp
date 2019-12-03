@@ -1,9 +1,9 @@
 #include "WindowHandler.h"
 
-WindowHandler::WindowHandler()
+WindowHandler::WindowHandler(const size_t W, const size_t H)
 {
 	SDL_Init(SDL_INIT_VIDEO);
-	mWnd = SDL_CreateWindow("Do what now?", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
+	mWnd = SDL_CreateWindow("Do what now?", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W, H, SDL_WINDOW_OPENGL);
 
 	std::fill(std::begin(mKeys), std::end(mKeys), 0);
 	std::fill(std::begin(mButtons), std::end(mButtons), 0);

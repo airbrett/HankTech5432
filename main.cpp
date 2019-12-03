@@ -13,7 +13,7 @@ int main(char* argv[], int argc)
 {
 	std::shared_ptr<Instance> Inst = std::make_shared<Instance>();
 
-	std::shared_ptr<WindowHandler> Window = std::make_shared<WindowHandler>();
+	std::shared_ptr<WindowHandler> Window = std::make_shared<WindowHandler>(1024, 768);
 	std::shared_ptr<Context> Ctx = std::make_shared<Context>(Window);
 	Physics Physicser(&Inst->Things);
 	RAM Rammer(&Inst->Things);

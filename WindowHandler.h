@@ -13,7 +13,7 @@ private:
 	std::array<uint8_t, 3> mButtons;
 
 public:
-	WindowHandler();
+	WindowHandler(const size_t W, const size_t H);
 
 	void Update();
 	SDL_Window* GetHandle();
