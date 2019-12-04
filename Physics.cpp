@@ -52,7 +52,8 @@ b2Body* Physics::AddCharacter(const float x, const float y)
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &Shape;
 	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
+	fixtureDef.friction = 0.3f;
+
 	b2Fixture* Fixture = Body->CreateFixture(&fixtureDef);
 
 	//Body->ApplyForce()
