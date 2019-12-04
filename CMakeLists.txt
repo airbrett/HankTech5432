@@ -8,8 +8,6 @@ add_subdirectory(${SDL2_LIST_DIR} SDL2)
 add_subdirectory(${GLEW_LIST_DIR} glew)
 add_subdirectory(${BOX2D_LIST_DIR} Box2D)
 
-find_package(OpenGL REQUIRED)
-
 add_executable(Async
 	Context.h
 	Context.cpp
@@ -45,5 +43,4 @@ target_link_libraries(Async
 	SDL2
 	glew
 	Box2D
-	${OPENGL_LIBRARIES}
 )
