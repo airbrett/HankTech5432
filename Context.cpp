@@ -4,8 +4,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <gl/glew.h>
-
 static const GLfloat g_vertex_buffer_data[] = {
 	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
 	-1.0f,-1.0f, 1.0f,
@@ -91,3 +89,25 @@ void Context::Update(Thing* Camera, std::vector<Thing*>* Things)
 	
 }
 
+
+size_t Context::LoadTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height)
+{
+	GLuint Texture;
+	glGenTextures(1, &Texture);
+	glBindTexture(GL_TEXTURE_2D, Texture);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Bytes);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	size_t Handle;
+	if (mTexHandMan.Rez(Handle))
+		mTextures.push_back(Texture);
+	else
+		mTextures[Handle] = Texture;
+
+	return Handle;
+}

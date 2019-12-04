@@ -12,6 +12,8 @@ add_subdirectory(${LODEPNG_LIST_DIR} lodepng)
 add_executable(Async
 	Context.h
 	Context.cpp
+	HandleHandler.h
+	HandleHandler.cpp
 	Instance.h
 	main.cpp
 	Physics.h

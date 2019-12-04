@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "WindowHandler.h"
 
+#include "lodepng.h"
+
 #include <array>
 #include <vector>
 
@@ -32,6 +34,11 @@ int main(char* argv[], int argc)
 
 	Plr->Init(Window);
 	Plr->SetPos(0.0, 0.0, -20);
+
+	std::vector<uint8_t> TexBytes;
+	unsigned int W, H;
+	lodepng::decode(TexBytes, W, H, "Data\\Wall.png");
+	Ctx->LoadTexture(TexBytes.data(), TexBytes.size(), W, H);
 
 	Inst->Camera = Plr;
 
