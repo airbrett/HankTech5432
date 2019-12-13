@@ -62,6 +62,7 @@ void Physics::AddThingCircle(Thing* Thg, const float r, const float d)
 	BodyDef.position.Set(0.0f, 0.0f);
 	BodyDef.linearDamping = 0.5f;
 	BodyDef.angularDamping = 0.5f;
+	//BodyDef.fixedRotation = true;
 
 	b2Body* Body = mWorld->CreateBody(&BodyDef);
 
@@ -93,5 +94,7 @@ void Physics::ApplyThingForce(Thing* Thg, const float x, const float z)
 {
 	b2Body* Body = reinterpret_cast<b2Body*>(Thg->GetPhysicsHandle());
 
-	Body->ApplyForceToCenter({ x, z }, true);
+	//Body->ApplyForceToCenter({ x, z }, true);
+	//Body->ApplyLinearImpulseToCenter({ x,z }, true);
+	Body->SetLinearVelocity({ x,z });
 }

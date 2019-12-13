@@ -48,6 +48,8 @@ Context::Context(std::shared_ptr<WindowHandler> Window) :
 {
 	mCtx = SDL_GL_CreateContext(Window->GetHandle());
 
+	SDL_GL_SetSwapInterval(1);
+
 	glewInit();
 
 	Init();

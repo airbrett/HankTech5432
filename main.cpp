@@ -54,7 +54,10 @@ int main(char* argv[], int argc)
 
 	while (!Window->KeyDown(27))
 	{
-		const float dt = (SDL_GetTicks() - Time) / 1000.0f;
+		const float Now = SDL_GetTicks();
+		const float dt = (Now - Time) / 1000.0f;
+
+		Time = Now;
 
 		for (Thing* T : Inst->Things)
 			T->Update(dt);
@@ -64,9 +67,6 @@ int main(char* argv[], int argc)
 		Ctx->Update(Plr, &Inst->Things);
 		Inst->Window->Swap();
 		Rammer.Update();
-		
-
-		SDL_Delay(10);
 	}
 
 	return 0;
