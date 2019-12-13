@@ -15,7 +15,8 @@ public:
 	Physics(std::vector<Thing*>* Things);
 
 	void Update(const float dt);
-	b2Body* AddCube(const int x, const int y, void* Data);
-	b2Body* AddCharacter(const float x, const float y);
-
+	void AddThingSquare(Thing* Thg, const float w, const float h, const float d);
+	void AddThingCircle(Thing* Thg, const float r, const float d);
+	void SetThingPos(Thing* Thg, const float x, const float z);
+	void ApplyThingForce(Thing* Thg, const float x, const float z);
 };

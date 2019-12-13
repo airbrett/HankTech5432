@@ -17,23 +17,31 @@ int main(char* argv[], int argc)
 
 	std::shared_ptr<WindowHandler> Window = std::make_shared<WindowHandler>(1024, 768);
 	std::shared_ptr<Context> Ctx = std::make_shared<Context>(Window);
-	Physics Physicser(&Inst->Things);
+	std::shared_ptr<Physics> Physicser = std::make_shared<Physics>(&Inst->Things);
 	RAM Rammer(&Inst->Things);
 
 	Inst->Window = Window;
 
 	Thing* A = Rammer.Rez<Thing>();
 
-	A->SetPos(-5, 0, 0);
+	//A->SetPos(-5, 0, 0);
+	Physicser->AddThingSquare(A, 1.0f, 1.0f, 0.0f);
+	Physicser->SetThingPos(A, -5, 0);
 
 	Thing* B = Rammer.Rez<Thing>();
 
-	B->SetPos(5, 0, 0);
+	//B->SetPos(5, 0, 0);
+	Physicser->AddThingSquare(B, 1.0f, 1.0f, 0.0f);
+	Physicser->SetThingPos(B, 5, 0);
+
+	
 
 	Player* Plr = Rammer.Rez<Player>();
 
-	Plr->Init(Window);
-	Plr->SetPos(0.0, 0.0, -20);
+	Plr->Init(Window, Physicser);
+	//Plr->SetPos(0.0, 0.0, -20);
+	Physicser->AddThingCircle(Plr, 0.4f, 1.0f);
+	Physicser->SetThingPos(Plr, 0, -20);
 
 	std::vector<uint8_t> TexBytes;
 	unsigned int W, H;
@@ -52,7 +60,7 @@ int main(char* argv[], int argc)
 			T->Update(dt);
 
 		Window->Update();
-		Physicser.Update(dt);
+		Physicser->Update(dt);
 		Ctx->Update(Plr, &Inst->Things);
 		Inst->Window->Swap();
 		Rammer.Update();

@@ -5,7 +5,8 @@
 #include <iostream>
 
 Thing::Thing() :
-	mRot()
+	mRot(),
+	mPhysicsHandle(nullptr)
 {
 	Draw = true;
 	MatStale = true;
@@ -25,6 +26,11 @@ void Thing::SetPos(const float x, const float y, const float z)
 	MatStale = true;
 }
 
+const glm::vec3& Thing::GetRot()
+{
+	return glm::eulerAngles(mRot);
+}
+
 void Thing::Turn(const glm::vec3& Rot)
 {
 	const glm::vec3 RotRad(glm::radians(Rot.x), glm::radians(Rot.y), glm::radians(Rot.z));
@@ -36,7 +42,7 @@ void Thing::Turn(const glm::vec3& Rot)
 
 void Thing::Move(const glm::vec3& Vec)
 {
-	Pos = Transform(Vec);
+	Pos = TransformPoint(Vec);
 	MatStale = true;
 }
 
@@ -57,12 +63,42 @@ bool Thing::DoDraw()
 	return Draw;
 }
 
-glm::vec3 Thing::Transform(const glm::vec3& Pt)
+glm::vec3 Thing::TransformRotation(const glm::vec3& Rot)
+{
+	return mRot * Rot;
+}
+
+glm::vec3 Thing::InverseTransformRotation(const glm::vec3& Rot)
+{
+	return Rot * mRot;
+}
+
+glm::vec3 Thing::TransformPoint(const glm::vec3& Pt)
 {
 	return GetMatrix() * glm::vec4(Pt, 1.0f);
 }
 
-glm::vec3 Thing::InverseTransform(const glm::vec3& Pt)
+glm::vec3 Thing::InverseTransformPoint(const glm::vec3& Pt)
 {
 	return glm::inverse(GetMatrix()) * glm::vec4(Pt, 1.0f);
+}
+
+glm::vec3 Thing::TransformVector(const glm::vec3& Vec)
+{
+	return mRot * Vec;
+}
+
+glm::vec3 Thing::InverseTransformVector(const glm::vec3& Vec)
+{
+	return Vec * mRot;
+}
+
+void* Thing::GetPhysicsHandle()
+{
+	return mPhysicsHandle;
+}
+
+void Thing::SetPhysicsHandle(void* const Handle)
+{
+	mPhysicsHandle = Handle;
 }
