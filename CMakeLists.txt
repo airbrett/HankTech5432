@@ -8,6 +8,7 @@ add_subdirectory(${SDL2_LIST_DIR} SDL2)
 add_subdirectory(${GLEW_LIST_DIR} glew)
 add_subdirectory(${BOX2D_LIST_DIR} Box2D)
 add_subdirectory(${LODEPNG_LIST_DIR} lodepng)
+add_subdirectory(${ASSIMP_LIST_DIR} assimp)
 
 add_executable(Async
 	Context.h
@@ -47,4 +48,5 @@ target_link_libraries(Async
 	glew
 	Box2D
 	lodepng
+	assimp
 )

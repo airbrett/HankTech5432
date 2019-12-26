@@ -26,7 +26,7 @@ void Thing::SetPos(const float x, const float y, const float z)
 	MatStale = true;
 }
 
-const glm::vec3& Thing::GetRot()
+const glm::vec3 Thing::GetRot()
 {
 	return glm::eulerAngles(mRot);
 }

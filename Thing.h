@@ -17,7 +17,7 @@ public:
 	Thing();
 
 	const glm::vec3& GetPos();
-	const glm::vec3& GetRot();
+	const glm::vec3 GetRot();
 	void SetPos(const float x, const float y, const float z);
 	void Turn(const glm::vec3& Rot);
 	void Move(const glm::vec3& Vec);
