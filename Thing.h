@@ -1,4 +1,7 @@
 #pragma once
+#include "PhysicsComponent.h"
+
+#include <functional>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -6,19 +9,20 @@
 class Thing //To be rezzed by a user
 {
 protected:
-	glm::vec3 Pos;
+	glm::vec3 mPos;
 	glm::quat mRot;
 	glm::mat4 mMat;
 	bool Draw;
 	bool MatStale;
-	void* mPhysicsHandle;
 
 public:
 	Thing();
 
+	PhysicsComponent* PhysComp;
+
 	const glm::vec3& GetPos();
 	const glm::vec3 GetRot();
-	void SetPos(const float x, const float y, const float z);
+	void SetPos(const glm::vec3& Pos);
 	void Turn(const glm::vec3& Rot);
 	void Move(const glm::vec3& Vec);
 	const glm::mat4& GetMatrix();
@@ -31,7 +35,4 @@ public:
 	glm::vec3 InverseTransformPoint(const glm::vec3& Pt);
 	glm::vec3 TransformVector(const glm::vec3& Vec);
 	glm::vec3 InverseTransformVector(const glm::vec3& Vec);
-
-	void* GetPhysicsHandle();
-	void SetPhysicsHandle(void* const Handle);
 };

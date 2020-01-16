@@ -1,12 +1,14 @@
 #include "Thing.h"
 
+#include "Physics.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 
 Thing::Thing() :
-	mRot(),
-	mPhysicsHandle(nullptr)
+	mRot()//,
+	//mBody(nullptr)
 {
 	Draw = true;
 	MatStale = true;
@@ -14,14 +16,12 @@ Thing::Thing() :
 
 const glm::vec3& Thing::GetPos()
 {
-	return Pos;
+	return mPos;
 }
 
-void Thing::SetPos(const float x, const float y, const float z)
+void Thing::SetPos(const glm::vec3& Pos)
 {
-	Pos.x = x;
-	Pos.y = y;
-	Pos.z = z;
+	mPos = Pos;
 
 	MatStale = true;
 }
@@ -42,7 +42,7 @@ void Thing::Turn(const glm::vec3& Rot)
 
 void Thing::Move(const glm::vec3& Vec)
 {
-	Pos = TransformPoint(Vec);
+	mPos = TransformPoint(Vec);
 	MatStale = true;
 }
 
@@ -52,7 +52,7 @@ const glm::mat4& Thing::GetMatrix()
 	{
 		MatStale = false;
 
-		mMat = glm::translate(glm::mat4(1.0f), Pos) * glm::mat4_cast(mRot);
+		mMat = glm::translate(glm::mat4(1.0f), mPos) * glm::mat4_cast(mRot);
 	}
 
 	return mMat;
@@ -91,14 +91,4 @@ glm::vec3 Thing::TransformVector(const glm::vec3& Vec)
 glm::vec3 Thing::InverseTransformVector(const glm::vec3& Vec)
 {
 	return Vec * mRot;
-}
-
-void* Thing::GetPhysicsHandle()
-{
-	return mPhysicsHandle;
-}
-
-void Thing::SetPhysicsHandle(void* const Handle)
-{
-	mPhysicsHandle = Handle;
 }

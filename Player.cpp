@@ -16,7 +16,7 @@ void Player::Init(std::shared_ptr<WindowHandler>& Wnd, std::shared_ptr<Physics>&
 
 void Player::Update(const float dt)
 {
-	const float SPD = 250.0f;
+	const float SPD = 25.0f;
 	glm::vec3 Dir(0);
 
 	if (mWnd->KeyDown('w'))
@@ -31,12 +31,13 @@ void Player::Update(const float dt)
 
 	const glm::vec3 Force = TransformVector(Dir);
 
-	mPhy->ApplyThingForce(this, Force.x, Force.z);
+	//SetLinearVelocity(Force);
+	PhysComp->SetLinearVelocity(Force);
 
 
 	const int32_t Mx = mWnd->Width() / 2 - mWnd->MouseX();
 	const int32_t My = mWnd->MouseY() - mWnd->Height() / 2;
-	const float Ms = 1.0f;
+	const float Ms = 1.5f;
 
 	Turn({ 0,Mx*Ms*dt,0.0f });
 	Turn({ My*Ms*dt,0.0f,0.0f });
