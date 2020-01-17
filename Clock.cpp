@@ -3,7 +3,7 @@
 Clock::Clock() : 
 	mTime(0.0)
 {
-	mPoint = std::chrono::high_resolution_clock::now();
+	Reset();
 }
 
 void Clock::Reset()
@@ -13,9 +13,12 @@ void Clock::Reset()
 
 void Clock::Step()
 {
-	const std::chrono::duration<float> dt = std::chrono::high_resolution_clock::now() - mPoint;
+	const std::chrono::time_point<std::chrono::high_resolution_clock> Now = std::chrono::high_resolution_clock::now();
+	const std::chrono::duration<float> dt = Now - mPoint;
 
 	mTime += dt.count();
+
+	mPoint = Now;
 }
 
 double Clock::GetTime()

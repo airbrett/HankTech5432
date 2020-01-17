@@ -32,7 +32,7 @@ int main(char* argv[], int argc)
 
 	B->PhysComp = Physicser->CreateComponent(B);
 	B->PhysComp->SetShape(PhysicsComponent::SQUARE, 1.0f);
-	A->PhysComp->SetPosition({ 5,0,0 });
+	B->PhysComp->SetPosition({ 5,0,0 });
 
 	
 
