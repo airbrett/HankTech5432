@@ -16,7 +16,7 @@ void Player::Init(std::shared_ptr<WindowHandler>& Wnd, std::shared_ptr<Physics>&
 
 void Player::Update(const float dt)
 {
-	const float SPD = 25.0f;
+	const float SPD = 250.0f;
 	glm::vec3 Dir(0);
 
 	if (mWnd->KeyDown('w'))
