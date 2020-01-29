@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 
+#include <vector>
+
 class Thing;
 class GraphicsHandle;
 
@@ -12,6 +14,7 @@ private:
 	Thing* mThing;
 	float* mBuffer;
 	unsigned int mNumVerticies;
+	std::vector<float> mVerticies;
 	//Someday
 	//GLuint mVBO;
 	//GLuint mIBO;
@@ -19,5 +22,5 @@ private:
 public:
 	GraphicsComponent(Thing* T);
 
-	void SetModel();
+	void SetModel(const char* Path);
 };

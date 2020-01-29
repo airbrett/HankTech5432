@@ -29,7 +29,7 @@ int main(char* argv[], int argc)
 	A->PhysComp->SetPosition({ -5,0,0 });
 
 	A->GfxComp = Ctx->CreateComponent(A);
-	A->GfxComp->SetModel();
+	A->GfxComp->SetModel("Data\\Cube.stl");
 
 	Thing* B = Rammer.Rez<Thing>();
 
@@ -38,7 +38,16 @@ int main(char* argv[], int argc)
 	B->PhysComp->SetPosition({ 5,0,0 });
 	
 	B->GfxComp = Ctx->CreateComponent(B);
-	B->GfxComp->SetModel();
+	B->GfxComp->SetModel("Data\\Sphere.stl");
+
+	Thing* C = Rammer.Rez<Thing>();
+
+	C->PhysComp = Physicser->CreateComponent(C);
+	C->PhysComp->SetShape(PhysicsComponent::SQUARE, 1.0f);
+	C->PhysComp->SetPosition({ 0,0,5 });
+
+	C->GfxComp = Ctx->CreateComponent(C);
+	C->GfxComp->SetModel("Data\\Sphereoid.stl");
 	
 
 	Player* Plr = Rammer.Rez<Player>();

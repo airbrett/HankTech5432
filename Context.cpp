@@ -22,6 +22,7 @@ void Context::Init()
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnable(GL_DEPTH_TEST);
+	//glDisable(GL_CULL_FACE);
 }
 
 void Context::Update(Thing* Camera)
