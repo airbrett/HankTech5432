@@ -1,5 +1,6 @@
 #pragma once
 #include "PhysicsComponent.h"
+#include "GraphicsComponent.h"
 
 #include <functional>
 
@@ -19,6 +20,7 @@ public:
 	Thing();
 
 	PhysicsComponent* PhysComp;
+	GraphicsComponent* GfxComp;
 
 	const glm::vec3& GetPos();
 	const glm::vec3 GetRot();

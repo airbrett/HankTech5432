@@ -4,44 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-static const GLfloat g_vertex_buffer_data[] = {
-	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-	-1.0f,-1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f, // triangle 1 : end
-	1.0f, 1.0f,-1.0f, // triangle 2 : begin
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f, // triangle 2 : end
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	-1.0f,-1.0f,-1.0f,
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f,
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f
-};
+#include <gl/glew.h>
 
 Context::Context(std::shared_ptr<WindowHandler> Window) :
 	mWnd(Window)
@@ -58,11 +21,10 @@ Context::Context(std::shared_ptr<WindowHandler> Window) :
 void Context::Init()
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, g_vertex_buffer_data);
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Context::Update(Thing* Camera, std::vector<Thing*>* Things)
+void Context::Update(Thing* Camera)
 {
 	const glm::vec3 CameraLook = Camera->TransformPoint({ 0.0f, 0.0f, 1.0f });
 	const glm::vec3 CameraUp(0.0, 1.0, 0.0);
@@ -78,17 +40,14 @@ void Context::Update(Thing* Camera, std::vector<Thing*>* Things)
 
 	glColor3f(0.0f, 1.0f, 0.0f);
 
-	for (Thing* T : *Things)
+	for (GraphicsComponent* Comp : mComponents)
 	{
-		if (T->DoDraw())
-		{
-			glLoadMatrixf(glm::value_ptr(View * T->GetMatrix()));
+		glVertexPointer(3, GL_FLOAT, 0, Comp->mBuffer);
 
-			glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
-		}
+		glLoadMatrixf(glm::value_ptr(View * Comp->mThing->GetMatrix()));
+
+		glDrawArrays(GL_TRIANGLES, 0, Comp->mNumVerticies);
 	}
-
-	
 }
 
 
@@ -112,4 +71,10 @@ size_t Context::LoadTexture(const uint8_t* const Bytes, const size_t Len, const 
 		mTextures[Handle] = Texture;
 
 	return Handle;
+}
+
+GraphicsComponent* Context::CreateComponent(Thing* T)
+{
+	mComponents.emplace_back(new GraphicsComponent(T));
+	return mComponents.back();
 }

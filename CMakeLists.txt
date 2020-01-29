@@ -13,6 +13,8 @@ add_subdirectory(${ASSIMP_LIST_DIR} assimp)
 add_executable(Async
 	Clock.h
 	Clock.cpp
+	GraphicsComponent.h
+	GraphicsComponent.cpp
 	Context.h
 	Context.cpp
 	HandleHandler.h
