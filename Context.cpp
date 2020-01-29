@@ -41,9 +41,12 @@ void Context::Update(Thing* Camera)
 
 	glColor3f(0.0f, 1.0f, 0.0f);
 
+	const GLsizei Stride = sizeof(float) * 5;
+
 	for (GraphicsComponent* Comp : mComponents)
 	{
-		glVertexPointer(3, GL_FLOAT, 0, Comp->mBuffer);
+		glVertexPointer(3, GL_FLOAT, Stride, Comp->mBuffer);
+		glTexCoordPointer(2, GL_FLOAT, Stride, Comp->mBuffer + 3);
 
 		glLoadMatrixf(glm::value_ptr(View * Comp->mThing->GetMatrix()));
 
