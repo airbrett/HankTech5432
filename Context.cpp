@@ -6,6 +6,8 @@
 
 #include <gl/glew.h>
 
+#include "lodepng.h"
+
 Context::Context(std::shared_ptr<WindowHandler> Window) :
 	mWnd(Window)
 {
@@ -21,8 +23,10 @@ Context::Context(std::shared_ptr<WindowHandler> Window) :
 void Context::Init()
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glEnable(GL_DEPTH_TEST);
 	//glDisable(GL_CULL_FACE);
+	glEnable(GL_TEXTURE_2D);
 }
 
 void Context::Update(Thing* Camera)
@@ -39,14 +43,14 @@ void Context::Update(Thing* Camera)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glColor3f(0.0f, 1.0f, 0.0f);
-
 	const GLsizei Stride = sizeof(float) * 5;
 
 	for (GraphicsComponent* Comp : mComponents)
 	{
 		glVertexPointer(3, GL_FLOAT, sizeof(GraphicsComponent::Vertex), Comp->mVtx.data());
-		//glTexCoordPointer(2, GL_FLOAT, sizeof(GraphicsComponent::Vertex), reinterpret_cast<char*>(Comp->mVtx.data()) + sizeof(GraphicsComponent::Vertex::Pos));
+		glTexCoordPointer(2, GL_FLOAT, sizeof(GraphicsComponent::Vertex), reinterpret_cast<char*>(Comp->mVtx.data()) + sizeof(GraphicsComponent::Vertex::Pos));
+
+		glBindTexture(GL_TEXTURE_2D, mTextures[Comp->mTex]);
 
 		glLoadMatrixf(glm::value_ptr(View * Comp->mThing->GetMatrix()));
 
@@ -79,6 +83,16 @@ size_t Context::LoadTexture(const uint8_t* const Bytes, const size_t Len, const 
 
 GraphicsComponent* Context::CreateComponent(Thing* T)
 {
-	mComponents.emplace_back(new GraphicsComponent(T));
-	return mComponents.back();
+	GraphicsComponent* Comp = new GraphicsComponent(T);
+
+	mComponents.emplace_back(Comp);
+
+	std::vector<unsigned char> Bytes;
+	unsigned int W, H;
+
+	lodepng::decode(Bytes, W, H, "Data\\Wall.png");
+
+	Comp->mTex = LoadTexture(Bytes.data(), Bytes.size(), W, H);
+
+	return Comp;
 }

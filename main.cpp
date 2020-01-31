@@ -6,11 +6,6 @@
 #include "Player.h"
 #include "WindowHandler.h"
 
-#include "lodepng.h"
-
-#include <array>
-#include <vector>
-
 int main(char* argv[], int argc)
 {
 	std::shared_ptr<Instance> Inst = std::make_shared<Instance>();
@@ -57,11 +52,6 @@ int main(char* argv[], int argc)
 	Plr->PhysComp->SetShape(PhysicsComponent::CIRCLE, 0.4f);
 	Plr->PhysComp->SetMass(1.0f);
 	Plr->PhysComp->SetPosition({ 0,0,-20 });
-
-	std::vector<uint8_t> TexBytes;
-	unsigned int W, H;
-	lodepng::decode(TexBytes, W, H, "Data\\Wall.png");
-	Ctx->LoadTexture(TexBytes.data(), TexBytes.size(), W, H);
 
 	Inst->Camera = Plr;
 

@@ -20,6 +20,7 @@ private:
 	Thing* mThing;
 	std::vector<unsigned int> mIndicies;
 	std::vector<Vertex> mVtx;
+	size_t mTex;
 	//Someday
 	//GLuint mVBO;
 	//GLuint mIBO;
