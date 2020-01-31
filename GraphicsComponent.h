@@ -11,10 +11,15 @@ class GraphicsComponent
 	friend class Context;
 
 private:
+	struct Vertex
+	{
+		glm::vec3 Pos;
+		glm::vec2 TexCoord;
+	};
+
 	Thing* mThing;
-	float* mBuffer;
-	unsigned int mNumVerticies;
-	std::vector<float> mVerticies;
+	std::vector<unsigned int> mIndicies;
+	std::vector<Vertex> mVtx;
 	//Someday
 	//GLuint mVBO;
 	//GLuint mIBO;

@@ -45,12 +45,12 @@ void Context::Update(Thing* Camera)
 
 	for (GraphicsComponent* Comp : mComponents)
 	{
-		glVertexPointer(3, GL_FLOAT, Stride, Comp->mBuffer);
-		glTexCoordPointer(2, GL_FLOAT, Stride, Comp->mBuffer + 3);
+		glVertexPointer(3, GL_FLOAT, sizeof(GraphicsComponent::Vertex), Comp->mVtx.data());
+		//glTexCoordPointer(2, GL_FLOAT, sizeof(GraphicsComponent::Vertex), reinterpret_cast<char*>(Comp->mVtx.data()) + sizeof(GraphicsComponent::Vertex::Pos));
 
 		glLoadMatrixf(glm::value_ptr(View * Comp->mThing->GetMatrix()));
 
-		glDrawArrays(GL_TRIANGLES, 0, Comp->mNumVerticies);
+		glDrawElements(GL_TRIANGLES, Comp->mIndicies.size(), GL_UNSIGNED_INT, Comp->mIndicies.data());
 	}
 }
 

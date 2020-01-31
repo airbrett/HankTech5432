@@ -13,11 +13,25 @@ void GraphicsComponent::SetModel(const char* Path)
 {
 	Assimp::Importer Importer;
 
+	mVtx.clear();
+
 	const aiScene* Scene = Importer.ReadFile(Path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 
 	for (size_t m = 0; m < Scene->mNumMeshes; m++)
 	{
 		const aiMesh* Mesh = Scene->mMeshes[m];
+
+		mVtx.resize(Mesh->mNumVertices);
+
+		for (size_t v = 0; v < Mesh->mNumVertices; v++)
+		{
+			mVtx[v].Pos.x = Mesh->mVertices[v].x;
+			mVtx[v].Pos.y = Mesh->mVertices[v].y;
+			mVtx[v].Pos.z = Mesh->mVertices[v].z;
+
+			mVtx[v].TexCoord.x = Mesh->mTextureCoords[0][v].x;
+			mVtx[v].TexCoord.y = Mesh->mTextureCoords[0][v].y;
+		}
 		
 		assert(Mesh->mNumUVComponents[0] == 2);
 		
@@ -28,21 +42,7 @@ void GraphicsComponent::SetModel(const char* Path)
 			assert(Face.mNumIndices == 3);
 			
 			for (size_t i = 0; i < Face.mNumIndices; i++)
-			{
-				const aiVector3D& Vtx = Mesh->mVertices[Face.mIndices[i]];
-
-				mVerticies.push_back(Vtx.x);
-				mVerticies.push_back(Vtx.y);
-				mVerticies.push_back(Vtx.z);
-
-				const aiVector3D& TexCoord = Mesh->mTextureCoords[0][Face.mIndices[i]];
-
-				mVerticies.push_back(TexCoord.x);
-				mVerticies.push_back(TexCoord.y);
-			}
+				mIndicies.emplace_back(Face.mIndices[i]);
 		}
 	}
-
-	mBuffer = mVerticies.data();
-	mNumVerticies = mVerticies.size() / 5;
 }
