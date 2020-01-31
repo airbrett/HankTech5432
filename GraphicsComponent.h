@@ -1,10 +1,13 @@
 #pragma once
 #include <glm/glm.hpp>
 
+#include <boost/filesystem.hpp>
+
 #include <vector>
 
 class Thing;
 class GraphicsHandle;
+class Context;
 
 class GraphicsComponent
 {
@@ -18,6 +21,7 @@ private:
 	};
 
 	Thing* mThing;
+	Context* mCtx;
 	std::vector<unsigned int> mIndicies;
 	std::vector<Vertex> mVtx;
 	size_t mTex;
@@ -25,8 +29,11 @@ private:
 	//GLuint mVBO;
 	//GLuint mIBO;
 
-public:
-	GraphicsComponent(Thing* T);
+	void LoadMesh(const boost::filesystem::path& Path);
+	void LoadTexture(const boost::filesystem::path& Path);
 
-	void SetModel(const char* Path);
+public:
+	GraphicsComponent(Context* C, Thing* T);
+
+	void SetModel(const boost::filesystem::path& Path);
 };

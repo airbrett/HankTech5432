@@ -6,8 +6,6 @@
 
 #include <gl/glew.h>
 
-#include "lodepng.h"
-
 Context::Context(std::shared_ptr<WindowHandler> Window) :
 	mWnd(Window)
 {
@@ -83,16 +81,9 @@ size_t Context::LoadTexture(const uint8_t* const Bytes, const size_t Len, const 
 
 GraphicsComponent* Context::CreateComponent(Thing* T)
 {
-	GraphicsComponent* Comp = new GraphicsComponent(T);
+	GraphicsComponent* Comp = new GraphicsComponent(this, T);
 
 	mComponents.emplace_back(Comp);
-
-	std::vector<unsigned char> Bytes;
-	unsigned int W, H;
-
-	lodepng::decode(Bytes, W, H, "Data\\Wall.png");
-
-	Comp->mTex = LoadTexture(Bytes.data(), Bytes.size(), W, H);
 
 	return Comp;
 }

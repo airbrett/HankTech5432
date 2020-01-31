@@ -1,11 +1,9 @@
 #pragma once
-#include "PhysicsComponent.h"
-#include "GraphicsComponent.h"
-
-#include <functional>
-
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+
+class PhysicsComponent;
+class GraphicsComponent;
 
 class Thing //To be rezzed by a user
 {

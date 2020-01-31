@@ -10,6 +10,10 @@ add_subdirectory(${BOX2D_LIST_DIR} Box2D)
 add_subdirectory(${LODEPNG_LIST_DIR} lodepng)
 add_subdirectory(${ASSIMP_LIST_DIR} assimp)
 
+add_subdirectory(${BOOST_LIST_DIR} boost)
+add_subdirectory(${BOOST_LIST_DIR}/system boost_system)
+add_subdirectory(${BOOST_LIST_DIR}/filesystem boost_filesystem)
+
 add_executable(Async
 	Clock.h
 	Clock.cpp
@@ -55,4 +59,6 @@ target_link_libraries(Async
 	Box2D
 	lodepng
 	assimp
+	boost_filesystem
+	boost_system
 )
