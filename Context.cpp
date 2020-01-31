@@ -41,18 +41,19 @@ void Context::Update(Thing* Camera)
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	const GLsizei Stride = sizeof(float) * 5;
-
 	for (GraphicsComponent* Comp : mComponents)
 	{
-		glVertexPointer(3, GL_FLOAT, sizeof(GraphicsComponent::Vertex), Comp->mVtx.data());
-		glTexCoordPointer(2, GL_FLOAT, sizeof(GraphicsComponent::Vertex), reinterpret_cast<char*>(Comp->mVtx.data()) + sizeof(GraphicsComponent::Vertex::Pos));
+		glBindBuffer(GL_ARRAY_BUFFER, mTextures[Comp->mVtx]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mTextures[Comp->mIdx]);
+
+		glVertexPointer(3, GL_FLOAT, sizeof(GraphicsComponent::Vertex), 0);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(GraphicsComponent::Vertex), reinterpret_cast<void*>(sizeof(GraphicsComponent::Vertex::Pos)));
 
 		glBindTexture(GL_TEXTURE_2D, mTextures[Comp->mTex]);
 
 		glLoadMatrixf(glm::value_ptr(View * Comp->mThing->GetMatrix()));
 
-		glDrawElements(GL_TRIANGLES, Comp->mIndicies.size(), GL_UNSIGNED_INT, Comp->mIndicies.data());
+		glDrawElements(GL_TRIANGLES, Comp->mIdxCount, GL_UNSIGNED_INT, 0);
 	}
 }
 
@@ -77,6 +78,35 @@ size_t Context::LoadTexture(const uint8_t* const Bytes, const size_t Len, const 
 		mTextures[Handle] = Texture;
 
 	return Handle;
+}
+
+void Context::LoadMesh(const std::vector<GraphicsComponent::Vertex>& Vtx, const std::vector<unsigned int>& Idx, size_t& hVtx, size_t& hIdx)
+{
+	GLuint VBO;
+	GLuint IBO;
+	size_t Handle;
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GraphicsComponent::Vertex) * Vtx.size(), Vtx.data(), GL_STATIC_DRAW);
+
+	if (mTexHandMan.Rez(Handle))
+		mTextures.push_back(VBO);
+	else
+		mTextures[Handle] = VBO;
+
+	hVtx = Handle;
+
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * Idx.size(), Idx.data(), GL_STATIC_DRAW);
+
+	if (mTexHandMan.Rez(Handle))
+		mTextures.push_back(IBO);
+	else
+		mTextures[Handle] = IBO;
+
+	hIdx = Handle;
 }
 
 GraphicsComponent* Context::CreateComponent(Thing* T)

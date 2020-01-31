@@ -3,8 +3,6 @@
 
 #include <boost/filesystem.hpp>
 
-#include <vector>
-
 class Thing;
 class GraphicsHandle;
 class Context;
@@ -22,12 +20,11 @@ private:
 
 	Thing* mThing;
 	Context* mCtx;
-	std::vector<unsigned int> mIndicies;
-	std::vector<Vertex> mVtx;
+	
 	size_t mTex;
-	//Someday
-	//GLuint mVBO;
-	//GLuint mIBO;
+	size_t mVtx;
+	size_t mIdx;
+	size_t mIdxCount;
 
 	void LoadMesh(const boost::filesystem::path& Path);
 	void LoadTexture(const boost::filesystem::path& Path);

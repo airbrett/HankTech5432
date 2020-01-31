@@ -11,6 +11,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
+#include <vector>
+
 GraphicsComponent::GraphicsComponent(Context* C, Thing* T) :
 	mCtx(C),
 	mThing(T)
@@ -39,9 +41,9 @@ void GraphicsComponent::SetModel(const boost::filesystem::path& Path)
 
 void GraphicsComponent::LoadMesh(const boost::filesystem::path& Path)
 {
+	std::vector<Vertex> Vtx;
+	std::vector<unsigned int> Indicies;
 	Assimp::Importer Importer;
-
-	mVtx.clear();
 
 	const aiScene* Scene = Importer.ReadFile(Path.string(), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 
@@ -49,16 +51,16 @@ void GraphicsComponent::LoadMesh(const boost::filesystem::path& Path)
 	{
 		const aiMesh* Mesh = Scene->mMeshes[m];
 
-		mVtx.resize(Mesh->mNumVertices);
+		Vtx.resize(Mesh->mNumVertices);
 
 		for (size_t v = 0; v < Mesh->mNumVertices; v++)
 		{
-			mVtx[v].Pos.x = Mesh->mVertices[v].x;
-			mVtx[v].Pos.y = Mesh->mVertices[v].y;
-			mVtx[v].Pos.z = Mesh->mVertices[v].z;
+			Vtx[v].Pos.x = Mesh->mVertices[v].x;
+			Vtx[v].Pos.y = Mesh->mVertices[v].y;
+			Vtx[v].Pos.z = Mesh->mVertices[v].z;
 
-			mVtx[v].TexCoord.x = Mesh->mTextureCoords[0][v].x;
-			mVtx[v].TexCoord.y = Mesh->mTextureCoords[0][v].y;
+			Vtx[v].TexCoord.x = Mesh->mTextureCoords[0][v].x;
+			Vtx[v].TexCoord.y = Mesh->mTextureCoords[0][v].y;
 		}
 
 		assert(Mesh->mNumUVComponents[0] == 2);
@@ -70,9 +72,12 @@ void GraphicsComponent::LoadMesh(const boost::filesystem::path& Path)
 			assert(Face.mNumIndices == 3);
 
 			for (size_t i = 0; i < Face.mNumIndices; i++)
-				mIndicies.emplace_back(Face.mIndices[i]);
+				Indicies.emplace_back(Face.mIndices[i]);
 		}
 	}
+
+	mCtx->LoadMesh(Vtx, Indicies, mVtx, mIdx);
+	mIdxCount = Indicies.size();
 }
 
 void GraphicsComponent::LoadTexture(const boost::filesystem::path& Path)

@@ -25,6 +25,7 @@ public:
 	void Update(Thing* Camera);
 
 	size_t LoadTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height);
+	void LoadMesh(const std::vector<GraphicsComponent::Vertex>& Vtx, const std::vector<unsigned int>& Idx, size_t& hVtx, size_t& hIdx);
 
 	GraphicsComponent* CreateComponent(Thing* T);
 };
