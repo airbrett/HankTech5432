@@ -5,6 +5,7 @@
 #include "RAM.h"
 #include "Player.h"
 #include "WindowHandler.h"
+#include "Map.h"
 
 int main(char* argv[], int argc)
 {
@@ -17,33 +18,7 @@ int main(char* argv[], int argc)
 
 	Inst->Window = Window;
 
-	Thing* A = Rammer.Rez<Thing>();
-
-	A->PhysComp = Physicser->CreateComponent(A);
-	A->PhysComp->SetShape(PhysicsComponent::SQUARE, 1.0f);
-	A->PhysComp->SetPosition({ -5,0,0 });
-
-	A->GfxComp = Ctx->CreateComponent(A);
-	A->GfxComp->SetModel("Data\\Cube.ht");
-
-	Thing* B = Rammer.Rez<Thing>();
-
-	B->PhysComp = Physicser->CreateComponent(B);
-	B->PhysComp->SetShape(PhysicsComponent::SQUARE, 1.0f);
-	B->PhysComp->SetPosition({ 5,0,0 });
-	
-	B->GfxComp = Ctx->CreateComponent(B);
-	B->GfxComp->SetModel("Data\\Sphere.ht");
-
-	Thing* C = Rammer.Rez<Thing>();
-
-	C->PhysComp = Physicser->CreateComponent(C);
-	C->PhysComp->SetShape(PhysicsComponent::SQUARE, 1.0f);
-	C->PhysComp->SetPosition({ 0,0,5 });
-
-	C->GfxComp = Ctx->CreateComponent(C);
-	C->GfxComp->SetModel("Data\\Sphereoid.ht");
-	
+	LoadMap("Data\\map1.ht", Rammer, Ctx, Physicser);
 
 	Player* Plr = Rammer.Rez<Player>();
 

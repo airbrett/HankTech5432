@@ -25,6 +25,8 @@ add_executable(Async
 	HandleHandler.cpp
 	Instance.h
 	main.cpp
+	Map.h
+	Map.cpp
 	Physics.h
 	Physics.cpp
 	PhysicsComponent.h
