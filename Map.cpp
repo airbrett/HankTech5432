@@ -3,7 +3,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/info_parser.hpp>
 
-void LoadMap(const boost::filesystem::path& Path, RAM& mem, std::shared_ptr<Context> Ctx, std::shared_ptr<Physics> Phy)
+void LoadMap(const boost::filesystem::path& Path, RAM& mem, std::shared_ptr<Context> Ctx, std::shared_ptr<Physics> Phy, std::vector<GraphicsComponent*>& GfxComp)
 {
 	const boost::filesystem::path MapRoot = Path.parent_path();
 	boost::property_tree::ptree MapTree;
@@ -30,7 +30,10 @@ void LoadMap(const boost::filesystem::path& Path, RAM& mem, std::shared_ptr<Cont
 
 			if (!Gfx.empty())
 			{
-				T->GfxComp = Ctx->CreateComponent(T);
+				GraphicsComponent* Comp = Ctx->CreateComponent(T);
+
+				GfxComp.push_back(Comp);
+				T->GfxComp = Comp;
 				T->GfxComp->SetModel(MapRoot / Gfx);
 			}
 

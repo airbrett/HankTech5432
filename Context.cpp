@@ -27,38 +27,107 @@ void Context::Init()
 	glEnable(GL_TEXTURE_2D);
 }
 
-void Context::Update(Thing* Camera)
+void Context::Update()
 {
-	const glm::vec3 CameraLook = Camera->TransformPoint({ 0.0f, 0.0f, 1.0f });
-	const glm::vec3 CameraUp(0.0, 1.0, 0.0);
-
-	const glm::mat4 Projection = glm::perspective(glm::radians(30.0f), static_cast<float>(mWnd->Width()) / mWnd->Height(), 0.1f, 1000.0f);
-	const glm::mat4 View = glm::lookAt(Camera->GetPos(), CameraLook, CameraUp);
-
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(Projection));
+	glLoadMatrixf(glm::value_ptr(mProj));
 	glMatrixMode(GL_MODELVIEW);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	//lol this was interesting but is it really worth the effort?
+	//another thing to play with is to move all this command junk
+	//into it's own class so this one can focus on just being opengl
+	GLenum Mode = 0;
+	std::size_t Vtx = std::numeric_limits<std::size_t>::max();
+	std::size_t Idx = std::numeric_limits<std::size_t>::max();
+	std::size_t Tex = std::numeric_limits<std::size_t>::max();
 
-	for (GraphicsComponent* Comp : mComponents)
+	while (!mCmds.empty())
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, mTextures[Comp->mVtx]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mTextures[Comp->mIdx]);
+		switch (mCmds.front())
+		{
+		case Commands::SetProj:
+			if (Mode != GL_PROJECTION)
+			{
+				Mode = GL_PROJECTION;
+				glMatrixMode(GL_PROJECTION);
+			}
 
-		glVertexPointer(3, GL_FLOAT, sizeof(GraphicsComponent::Vertex), 0);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(GraphicsComponent::Vertex), reinterpret_cast<void*>(sizeof(GraphicsComponent::Vertex::Pos)));
+			mCmds.pop();
 
-		glBindTexture(GL_TEXTURE_2D, mTextures[Comp->mTex]);
+			glLoadMatrixf(glm::value_ptr(mMtx[mCmds.front()]));
 
-		glLoadMatrixf(glm::value_ptr(View * Comp->mThing->GetMatrix()));
+			mCmds.pop();
+			break;
 
-		glDrawElements(GL_TRIANGLES, Comp->mIdxCount, GL_UNSIGNED_INT, 0);
+		case Commands::SetView:
+			if (Mode != GL_MODELVIEW)
+			{
+				Mode = GL_MODELVIEW;
+				glMatrixMode(GL_MODELVIEW);
+			}
+
+			mCmds.pop();
+
+			glLoadMatrixf(glm::value_ptr(mMtx[mCmds.front()]));
+
+			mCmds.pop();
+			break;
+
+		case Commands::SetVtx:
+			mCmds.pop();
+
+			if (Vtx != mCmds.front())
+			{
+				Vtx = mCmds.front();
+				glBindBuffer(GL_ARRAY_BUFFER, mResources[Vtx]);
+				glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
+				glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(sizeof(Vertex::Pos)));
+			}
+
+			mCmds.pop();
+			break;
+
+		case Commands::SetIdx:
+			mCmds.pop();
+
+			if (Idx != mCmds.front())
+			{
+				Idx = mCmds.front();
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResources[Idx]);
+			}
+
+			mCmds.pop();
+			break;
+
+		case Commands::SetTex:
+			mCmds.pop();
+
+			if (Tex != mCmds.front())
+			{
+				Tex = mCmds.front();
+				glBindTexture(GL_TEXTURE_2D, mResources[Tex]);
+			}
+
+			mCmds.pop();
+			break;
+			
+		case Commands::Draw:
+			mCmds.pop();
+
+			glDrawElements(GL_TRIANGLES, mCmds.front(), GL_UNSIGNED_INT, 0);
+			mCmds.pop();
+
+			break;
+		};
 	}
+	
+	mMtx.clear();
 }
 
 
-size_t Context::LoadTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height)
+size_t Context::CreateTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height)
 {
 	GLuint Texture;
 	glGenTextures(1, &Texture);
@@ -73,40 +142,91 @@ size_t Context::LoadTexture(const uint8_t* const Bytes, const size_t Len, const 
 
 	size_t Handle;
 	if (mTexHandMan.Rez(Handle))
-		mTextures.push_back(Texture);
+		mResources.push_back(Texture);
 	else
-		mTextures[Handle] = Texture;
+		mResources[Handle] = Texture;
 
 	return Handle;
 }
 
-void Context::LoadMesh(const std::vector<GraphicsComponent::Vertex>& Vtx, const std::vector<unsigned int>& Idx, size_t& hVtx, size_t& hIdx)
+std::size_t Context::CreateVertexBuffer(const Vertex* Verticies, const std::size_t Count)
 {
 	GLuint VBO;
-	GLuint IBO;
-	size_t Handle;
+	std::size_t Handle;
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GraphicsComponent::Vertex) * Vtx.size(), Vtx.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Count, Verticies, GL_STATIC_DRAW);
 
 	if (mTexHandMan.Rez(Handle))
-		mTextures.push_back(VBO);
+		mResources.push_back(VBO);
 	else
-		mTextures[Handle] = VBO;
+		mResources[Handle] = VBO;
 
-	hVtx = Handle;
+	return Handle;
+}
+
+std::size_t Context::CreateIndexBuffer(const unsigned int* Indices, const std::size_t Count)
+{
+	GLuint IBO;
+	size_t Handle;
 
 	glGenBuffers(1, &IBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * Idx.size(), Idx.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * Count, Indices, GL_STATIC_DRAW);
 
 	if (mTexHandMan.Rez(Handle))
-		mTextures.push_back(IBO);
+		mResources.push_back(IBO);
 	else
-		mTextures[Handle] = IBO;
+		mResources[Handle] = IBO;
 
-	hIdx = Handle;
+	return Handle;
+}
+
+void Context::SetProj(const glm::mat4& Proj)
+{
+	mProj = Proj;
+
+	const std::size_t Index = mMtx.size();
+	mMtx.emplace_back(Proj);
+
+	mCmds.emplace(Commands::SetProj);
+	mCmds.emplace(Index);
+}
+
+void Context::SetView(const glm::mat4& View)
+{
+	mView = View;
+
+	const std::size_t Index = mMtx.size();
+	mMtx.emplace_back(View);
+
+	mCmds.emplace(Commands::SetView);
+	mCmds.emplace(Index);
+}
+
+void Context::SetVertexBuffer(const std::size_t Buff)
+{
+	mCmds.emplace(Commands::SetVtx);
+	mCmds.emplace(Buff);
+}
+
+void Context::SetIndexBuffer(const std::size_t Buff)
+{
+	mCmds.emplace(Commands::SetIdx);
+	mCmds.emplace(Buff);
+}
+
+void Context::SetTex(const std::size_t Tex)
+{
+	mCmds.emplace(Commands::SetTex);
+	mCmds.emplace(Tex);
+}
+
+void Context::Draw(const std::size_t Count)
+{
+	mCmds.emplace(Commands::Draw);
+	mCmds.emplace(Count);
 }
 
 GraphicsComponent* Context::CreateComponent(Thing* T)

@@ -76,7 +76,8 @@ void GraphicsComponent::LoadMesh(const boost::filesystem::path& Path)
 		}
 	}
 
-	mCtx->LoadMesh(Vtx, Indicies, mVtx, mIdx);
+	mVtx = mCtx->CreateVertexBuffer(Vtx.data(), Vtx.size());
+	mIdx = mCtx->CreateIndexBuffer(Indicies.data(), Indicies.size());
 	mIdxCount = Indicies.size();
 }
 
@@ -87,5 +88,5 @@ void GraphicsComponent::LoadTexture(const boost::filesystem::path& Path)
 
 	lodepng::decode(Bytes, W, H, Path.string());
 
-	mTex = mCtx->LoadTexture(Bytes.data(), Bytes.size(), W, H);
+	mTex = mCtx->CreateTexture(Bytes.data(), Bytes.size(), W, H);
 }

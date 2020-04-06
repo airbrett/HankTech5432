@@ -7,7 +7,23 @@
 #include <gl/glew.h>
 
 #include <memory>
+#include <queue>
 #include <vector>
+
+typedef std::size_t Command;
+
+namespace Commands
+{
+	enum
+	{
+		SetProj,
+		SetView,
+		SetVtx,
+		SetIdx,
+		SetTex,
+		Draw
+	};
+}
 
 class Context
 {
@@ -16,16 +32,30 @@ private:
 	std::vector<Thing*>* mThings;
 	SDL_GLContext mCtx;
 	HandleHandler mTexHandMan;
-	std::vector<GLuint> mTextures;
+	std::vector<GLuint> mResources;
 	std::vector<GraphicsComponent*> mComponents;
+
+	std::vector<glm::mat4> mMtx;
+	std::queue<std::size_t> mCmds;
+
+	glm::mat4 mProj;
+	glm::mat4 mView;
 
 public:
 	Context(std::shared_ptr<WindowHandler> Window);
 	void Init();
-	void Update(Thing* Camera);
+	void Update();
 
-	size_t LoadTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height);
-	void LoadMesh(const std::vector<GraphicsComponent::Vertex>& Vtx, const std::vector<unsigned int>& Idx, size_t& hVtx, size_t& hIdx);
+	std::size_t CreateVertexBuffer(const Vertex* Verticies, const std::size_t Count);
+	std::size_t CreateIndexBuffer(const unsigned int* Indices, const std::size_t Count);
+	size_t CreateTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height);
+
+	void SetProj(const glm::mat4& Proj);
+	void SetView(const glm::mat4& View);
+	void SetVertexBuffer(const std::size_t Buff);
+	void SetIndexBuffer(const std::size_t Buff);
+	void SetTex(const std::size_t Tex);
+	void Draw(const std::size_t Count);
 
 	GraphicsComponent* CreateComponent(Thing* T);
 };
