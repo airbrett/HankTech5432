@@ -32,7 +32,8 @@ void Player::Update(const float dt)
 	const glm::vec3 Force = TransformVector(Dir);
 
 	//SetLinearVelocity(Force);
-	PhysComp->SetLinearVelocity(Force);
+	//PhysComp->SetLinearVelocity(Force);
+	mPhy->SetLinearVelocity(PhysicalHandle, Force);
 
 
 	const int32_t Mx = mWnd->Width() / 2 - mWnd->MouseX();

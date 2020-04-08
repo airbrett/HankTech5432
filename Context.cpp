@@ -131,12 +131,3 @@ void Context::Submit(const std::size_t Count)
 {
 	glDrawElements(GL_TRIANGLES, Count, GL_UNSIGNED_INT, 0);
 }
-
-GraphicsComponent* Context::CreateComponent(Thing* T)
-{
-	GraphicsComponent* Comp = new GraphicsComponent(this, T);
-
-	mComponents.emplace_back(Comp);
-
-	return Comp;
-}

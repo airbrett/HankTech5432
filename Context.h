@@ -2,13 +2,19 @@
 #include "Thing.h"
 #include "WindowHandler.h"
 #include "HandleHandler.h"
-#include "GraphicsComponent.h"
 
 #include <gl/glew.h>
 
 #include <memory>
 #include <queue>
 #include <vector>
+
+struct Vertex
+{
+	glm::vec3 Pos;
+	glm::vec2 TexCoord;
+};
+
 
 class Context
 {
@@ -36,6 +42,4 @@ public:
 	void SetIndexBuffer(const std::size_t Buff);
 	void SetTex(const std::size_t Tex);
 	void Submit(const std::size_t Count);
-
-	GraphicsComponent* CreateComponent(Thing* T);
 };

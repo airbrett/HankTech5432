@@ -12,6 +12,7 @@ Thing::Thing() :
 {
 	Draw = true;
 	MatStale = true;
+	PhysicalHandle = std::numeric_limits<std::size_t>::max();
 }
 
 const glm::vec3& Thing::GetPos()

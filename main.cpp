@@ -19,7 +19,7 @@ int main(char* argv[], int argc)
 	std::shared_ptr<Physics> Physicser = std::make_shared<Physics>(Inst, &Inst->Things);
 	RAM Rammer(&Inst->Things);
 
-	std::vector<GraphicsComponent*> GfxComp;
+	std::vector<Thing*> GfxComp;
 
 	Inst->Window = Window;
 
@@ -30,10 +30,8 @@ int main(char* argv[], int argc)
 	Player* Plr = Rammer.Rez<Player>();
 
 	Plr->Init(Window, Physicser);
-	Plr->PhysComp = Physicser->CreateComponent(Plr);
-	Plr->PhysComp->SetShape(PhysicsComponent::CIRCLE, 0.4f);
-	Plr->PhysComp->SetMass(1.0f);
-	Plr->PhysComp->SetPosition({ 0,0,-20 });
+	Plr->PhysicalHandle = Physicser->CreateCircle(0.2f, 1.0f);
+	Physicser->SetPosition(Plr->PhysicalHandle, { 0,0,-20 });
 
 	Inst->Camera = Plr;
 
@@ -53,8 +51,19 @@ int main(char* argv[], int argc)
 			T->Update(dt);
 
 		Window->Update();
+
+		//Physics update
 		Physicser->Update();
 
+		glm::vec3 Pos;
+
+		for (Thing* T : Inst->Things)
+		{
+			if (Physicser->GetPos(T->PhysicalHandle, Pos))
+				T->SetPos(Pos);
+		}
+
+		//Update graphics
 		const glm::vec3 CameraLook = Plr->TransformPoint({ 0.0f, 0.0f, 1.0f });
 		const glm::vec3 CameraUp(0.0, 1.0, 0.0);
 
@@ -64,13 +73,13 @@ int main(char* argv[], int argc)
 		Ctx->Clear();
 		Ctx->SetProj(Projection);
 		
-		for (GraphicsComponent* Comp : GfxComp)
+		for (Thing* Comp : GfxComp)
 		{
-			Ctx->SetModelView(View * Comp->mThing->GetMatrix());
-			Ctx->SetVertexBuffer(Comp->mVtx);
-			Ctx->SetIndexBuffer(Comp->mIdx);
-			Ctx->SetTex(Comp->mTex);
-			Ctx->Submit(Comp->mIdxCount);
+			Ctx->SetModelView(View * Comp->GetMatrix());
+			Ctx->SetVertexBuffer(Comp->Gfx.mVtx);
+			Ctx->SetIndexBuffer(Comp->Gfx.mIdx);
+			Ctx->SetTex(Comp->Gfx.mTex);
+			Ctx->Submit(Comp->Gfx.mIdxCount);
 		}
 
 		//DefSub.Flush();

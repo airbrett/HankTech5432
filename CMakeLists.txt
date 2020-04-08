@@ -18,8 +18,6 @@ add_executable(Async
 	Clock.h
 	Clock.cpp
 	DeferredSubmitter.h
-	GraphicsComponent.h
-	GraphicsComponent.cpp
 	Context.h
 	Context.cpp
 	HandleHandler.h
@@ -30,8 +28,6 @@ add_executable(Async
 	Map.cpp
 	Physics.h
 	Physics.cpp
-	PhysicsComponent.h
-	PhysicsComponent.cpp
 	Player.h
 	Player.cpp
 	RAM.h

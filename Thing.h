@@ -17,8 +17,15 @@ protected:
 public:
 	Thing();
 
-	PhysicsComponent* PhysComp;
+	std::size_t PhysicalHandle;
 	GraphicsComponent* GfxComp;
+	struct
+	{
+		size_t mIdxCount;
+		size_t mTex;
+		size_t mVtx;
+		size_t mIdx;
+	} Gfx;
 
 	const glm::vec3& GetPos();
 	const glm::vec3 GetRot();
