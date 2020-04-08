@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "WindowHandler.h"
 #include "Map.h"
+#include "DeferredSubmitter.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -23,6 +24,8 @@ int main(char* argv[], int argc)
 	Inst->Window = Window;
 
 	LoadMap("Data\\map1.ht", Rammer, Ctx, Physicser, GfxComp);
+
+	//DeferredSubmitter<Context> DefSub(Ctx.get());
 
 	Player* Plr = Rammer.Rez<Player>();
 
@@ -58,18 +61,20 @@ int main(char* argv[], int argc)
 		const glm::mat4 Projection = glm::perspective(glm::radians(30.0f), static_cast<float>(Window->Width()) / Window->Height(), 0.1f, 1000.0f);
 		const glm::mat4 View = glm::lookAt(Plr->GetPos(), CameraLook, CameraUp);
 
+		Ctx->Clear();
 		Ctx->SetProj(Projection);
 		
 		for (GraphicsComponent* Comp : GfxComp)
 		{
-			Ctx->SetView(View * Comp->mThing->GetMatrix());
+			Ctx->SetModelView(View * Comp->mThing->GetMatrix());
 			Ctx->SetVertexBuffer(Comp->mVtx);
 			Ctx->SetIndexBuffer(Comp->mIdx);
 			Ctx->SetTex(Comp->mTex);
-			Ctx->Draw(Comp->mIdxCount);
+			Ctx->Submit(Comp->mIdxCount);
 		}
 
-		Ctx->Update();
+		//DefSub.Flush();
+
 		Inst->Window->Swap();
 		Rammer.Update();
 	}

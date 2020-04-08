@@ -17,6 +17,7 @@ add_subdirectory(${BOOST_LIST_DIR}/filesystem boost_filesystem)
 add_executable(Async
 	Clock.h
 	Clock.cpp
+	DeferredSubmitter.h
 	GraphicsComponent.h
 	GraphicsComponent.cpp
 	Context.h

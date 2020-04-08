@@ -27,106 +27,6 @@ void Context::Init()
 	glEnable(GL_TEXTURE_2D);
 }
 
-void Context::Update()
-{
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(mProj));
-	glMatrixMode(GL_MODELVIEW);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	//lol this was interesting but is it really worth the effort?
-	//another thing to play with is to move all this command junk
-	//into it's own class so this one can focus on just being opengl
-	GLenum Mode = 0;
-	std::size_t Vtx = std::numeric_limits<std::size_t>::max();
-	std::size_t Idx = std::numeric_limits<std::size_t>::max();
-	std::size_t Tex = std::numeric_limits<std::size_t>::max();
-
-	while (!mCmds.empty())
-	{
-		switch (mCmds.front())
-		{
-		case Commands::SetProj:
-			if (Mode != GL_PROJECTION)
-			{
-				Mode = GL_PROJECTION;
-				glMatrixMode(GL_PROJECTION);
-			}
-
-			mCmds.pop();
-
-			glLoadMatrixf(glm::value_ptr(mMtx[mCmds.front()]));
-
-			mCmds.pop();
-			break;
-
-		case Commands::SetView:
-			if (Mode != GL_MODELVIEW)
-			{
-				Mode = GL_MODELVIEW;
-				glMatrixMode(GL_MODELVIEW);
-			}
-
-			mCmds.pop();
-
-			glLoadMatrixf(glm::value_ptr(mMtx[mCmds.front()]));
-
-			mCmds.pop();
-			break;
-
-		case Commands::SetVtx:
-			mCmds.pop();
-
-			if (Vtx != mCmds.front())
-			{
-				Vtx = mCmds.front();
-				glBindBuffer(GL_ARRAY_BUFFER, mResources[Vtx]);
-				glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
-				glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(sizeof(Vertex::Pos)));
-			}
-
-			mCmds.pop();
-			break;
-
-		case Commands::SetIdx:
-			mCmds.pop();
-
-			if (Idx != mCmds.front())
-			{
-				Idx = mCmds.front();
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResources[Idx]);
-			}
-
-			mCmds.pop();
-			break;
-
-		case Commands::SetTex:
-			mCmds.pop();
-
-			if (Tex != mCmds.front())
-			{
-				Tex = mCmds.front();
-				glBindTexture(GL_TEXTURE_2D, mResources[Tex]);
-			}
-
-			mCmds.pop();
-			break;
-			
-		case Commands::Draw:
-			mCmds.pop();
-
-			glDrawElements(GL_TRIANGLES, mCmds.front(), GL_UNSIGNED_INT, 0);
-			mCmds.pop();
-
-			break;
-		};
-	}
-	
-	mMtx.clear();
-}
-
-
 size_t Context::CreateTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height)
 {
 	GLuint Texture;
@@ -183,50 +83,53 @@ std::size_t Context::CreateIndexBuffer(const unsigned int* Indices, const std::s
 	return Handle;
 }
 
-void Context::SetProj(const glm::mat4& Proj)
+void Context::Clear()
 {
-	mProj = Proj;
-
-	const std::size_t Index = mMtx.size();
-	mMtx.emplace_back(Proj);
-
-	mCmds.emplace(Commands::SetProj);
-	mCmds.emplace(Index);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Context::SetView(const glm::mat4& View)
+void Context::SetProj(const glm::mat4& Proj)
 {
-	mView = View;
+	if (mMtxMode != GL_PROJECTION)
+	{
+		mMtxMode = GL_PROJECTION;
+		glMatrixMode(GL_PROJECTION);
+	}
 
-	const std::size_t Index = mMtx.size();
-	mMtx.emplace_back(View);
+	glLoadMatrixf(glm::value_ptr(Proj));
+}
 
-	mCmds.emplace(Commands::SetView);
-	mCmds.emplace(Index);
+void Context::SetModelView(const glm::mat4& View)
+{
+	if (mMtxMode != GL_MODELVIEW)
+	{
+		mMtxMode = GL_MODELVIEW;
+		glMatrixMode(GL_MODELVIEW);
+	}
+
+	glLoadMatrixf(glm::value_ptr(View));
 }
 
 void Context::SetVertexBuffer(const std::size_t Buff)
 {
-	mCmds.emplace(Commands::SetVtx);
-	mCmds.emplace(Buff);
+	glBindBuffer(GL_ARRAY_BUFFER, mResources[Buff]);
+	glVertexPointer(3, GL_FLOAT, sizeof(Vertex), 0);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(sizeof(Vertex::Pos)));
 }
 
 void Context::SetIndexBuffer(const std::size_t Buff)
 {
-	mCmds.emplace(Commands::SetIdx);
-	mCmds.emplace(Buff);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResources[Buff]);
 }
 
 void Context::SetTex(const std::size_t Tex)
 {
-	mCmds.emplace(Commands::SetTex);
-	mCmds.emplace(Tex);
+	glBindTexture(GL_TEXTURE_2D, mResources[Tex]);
 }
 
-void Context::Draw(const std::size_t Count)
+void Context::Submit(const std::size_t Count)
 {
-	mCmds.emplace(Commands::Draw);
-	mCmds.emplace(Count);
+	glDrawElements(GL_TRIANGLES, Count, GL_UNSIGNED_INT, 0);
 }
 
 GraphicsComponent* Context::CreateComponent(Thing* T)
