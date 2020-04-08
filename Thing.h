@@ -2,9 +2,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-class PhysicsComponent;
-class GraphicsComponent;
-
 class Thing //To be rezzed by a user
 {
 protected:
@@ -18,7 +15,6 @@ public:
 	Thing();
 
 	std::size_t PhysicalHandle;
-	GraphicsComponent* GfxComp;
 	struct
 	{
 		size_t mIdxCount;

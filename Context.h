@@ -24,7 +24,6 @@ private:
 	SDL_GLContext mCtx;
 	HandleHandler mTexHandMan;
 	std::vector<GLuint> mResources;
-	std::vector<GraphicsComponent*> mComponents;
 	unsigned int mMtxMode;
 
 public:
