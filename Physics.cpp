@@ -36,9 +36,9 @@ std::size_t Physics::CreateSquare(const float w, const float h, const float d)
 	b2Fixture* Fixture = Body->CreateFixture(&FixDef);
 
 	if (mBodyHandMan.Rez(Handle))
-		mBodies.push_back(Body);
-	else
 		mBodies[Handle] = Body;
+	else
+		mBodies.push_back(Body);
 
 	return Handle;
 }
@@ -67,9 +67,9 @@ std::size_t Physics::CreateCircle(const float r, const float d)
 	b2Fixture* Fixture = Body->CreateFixture(&fixtureDef);
 
 	if (mBodyHandMan.Rez(Handle))
-		mBodies.push_back(Body);
-	else
 		mBodies[Handle] = Body;
+	else
+		mBodies.push_back(Body);
 
 	return Handle;
 }

@@ -1,8 +1,8 @@
 #include "Thing.h"
-#include "Instance.h"
 #include "Context.h"
 #include "Physics.h"
 #include "RAM.h"
+#include "Clock.h"
 #include "Player.h"
 #include "WindowHandler.h"
 #include "Map.h"
@@ -12,58 +12,77 @@
 
 int main(char* argv[], int argc)
 {
-	std::shared_ptr<Instance> Inst = std::make_shared<Instance>();
-
 	std::shared_ptr<WindowHandler> Window = std::make_shared<WindowHandler>(1024, 768);
 	std::shared_ptr<Context> Ctx = std::make_shared<Context>(Window);
 	std::shared_ptr<Physics> Physicser = std::make_shared<Physics>();
-	RAM Rammer(&Inst->Things);
+	RAM World;
+	Clock Time;
 
-	std::vector<Thing*> GfxComp;
-
-	Inst->Window = Window;
-
-	LoadMap("Data\\map1.ht", Rammer, Ctx, Physicser, GfxComp);
+	LoadMap("Data\\map1.ht", Ctx, Physicser, World);
 
 	//DeferredSubmitter<Context> DefSub(Ctx.get());
 
-	Player* Plr = Rammer.Rez<Player>();
+	std::shared_ptr<Player> Plr = World.Rez<Player>();
 
 	Plr->Init(Window, Physicser);
 	Plr->PhysicalHandle = Physicser->CreateCircle(0.2f, 1.0f);
 	Physicser->SetPosition(Plr->PhysicalHandle, { 0,0,-20 });
 
-	Inst->Camera = Plr;
-
 	const double UPDATE_STEP = 1.0 / 60.0;
-	double Timer = Inst->Time.GetTime();
+	double Timer = Time.GetTime();
 
-	Inst->Time.Reset();
+	Time.Reset();
 
 	while (!Window->KeyDown(27))
 	{
-		Inst->Time.Step();
+		std::vector<std::shared_ptr<Thing>>& Objects = World.GetObjects();
+
+		Time.Step();
 
 		Window->Update();
 
 		//Fixed rate updates
-		while (Inst->Time.GetTime() > Timer + UPDATE_STEP)
+		if (Time.GetTime() > Timer + UPDATE_STEP)
 		{
-			Timer += UPDATE_STEP;
+			do
+			{
+				Timer += UPDATE_STEP;
 
-			Physicser->Update(UPDATE_STEP);
+				Physicser->Update(UPDATE_STEP);
+			}
+			while (Time.GetTime() > Timer + UPDATE_STEP);
+
+			glm::vec3 Pos;
+
+			for (std::shared_ptr<Thing> T : Objects)
+			{
+				if (T->PhysicalHandle != Thing::INVALID_HANDLE)
+				{
+					if (Physicser->GetPos(T->PhysicalHandle, Pos))
+						T->SetPos(Pos);
+				}
+			}
 		}
 
-		for (Thing* T : Inst->Things)
-			T->Update(Inst->Time.GetDT());
-		
+		//Update logic for things
+		for (std::shared_ptr<Thing> T : Objects)
+			T->Update(Time.GetDT());
 
-		glm::vec3 Pos;
+		//Cleanup
+		std::vector<std::shared_ptr<Thing>>::iterator Iter = std::begin(Objects);
 
-		for (Thing* T : Inst->Things)
+		while (Iter != std::end(Objects))
 		{
-			if (Physicser->GetPos(T->PhysicalHandle, Pos))
-				T->SetPos(Pos);
+			if ((*Iter)->PendingDeRez())
+			{
+				//TODO cleanup physics/graphics handles
+				Iter->reset();
+				Iter = Objects.erase(Iter);
+			}
+			else
+			{
+				Iter++;
+			}
 		}
 
 		//Update graphics
@@ -76,19 +95,21 @@ int main(char* argv[], int argc)
 		Ctx->Clear();
 		Ctx->SetProj(Projection);
 		
-		for (Thing* Comp : GfxComp)
+		for (std::shared_ptr<Thing> T : Objects)
 		{
-			Ctx->SetModelView(View * Comp->GetMatrix());
-			Ctx->SetVertexBuffer(Comp->Gfx.mVtx);
-			Ctx->SetIndexBuffer(Comp->Gfx.mIdx);
-			Ctx->SetTex(Comp->Gfx.mTex);
-			Ctx->Submit(Comp->Gfx.mIdxCount);
+			if (T->Gfx.mVtx != Thing::INVALID_HANDLE)
+			{
+				Ctx->SetModelView(View * T->GetMatrix());
+				Ctx->SetVertexBuffer(T->Gfx.mVtx);
+				Ctx->SetIndexBuffer(T->Gfx.mIdx);
+				Ctx->SetTex(T->Gfx.mTex);
+				Ctx->Submit(T->Gfx.mIdxCount);
+			}
 		}
 
 		//DefSub.Flush();
 
-		Inst->Window->Swap();
-		Rammer.Update();
+		Window->Swap();
 	}
 
 	return 0;

@@ -5,23 +5,23 @@ HandleHandler::HandleHandler() :
 {
 }
 
-bool HandleHandler::Rez(size_t& Index)
+bool HandleHandler::Rez(std::size_t& Index)
 {
 	if (mDerezed.empty())
 	{
 		Index = mMaxIndex;
 		mMaxIndex++;
-		return true;
+		return false;
 	}
 	else
 	{
 		Index = mDerezed.front();
 		mDerezed.pop();
-		return false;
+		return true;
 	}
 }
 
-void HandleHandler::Derez(const size_t Index)
+void HandleHandler::Derez(const std::size_t Index)
 {
 	mDerezed.push(Index);
 }

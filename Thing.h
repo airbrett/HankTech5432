@@ -10,8 +10,11 @@ protected:
 	glm::mat4 mMat;
 	bool Draw;
 	bool MatStale;
+	bool mDeRez;
 
 public:
+	static const std::size_t INVALID_HANDLE = std::numeric_limits<std::size_t>::max();
+
 	Thing();
 
 	std::size_t PhysicalHandle;
@@ -31,6 +34,8 @@ public:
 	const glm::mat4& GetMatrix();
 	virtual void Update(const double dt) {}
 	bool DoDraw();
+	void DeRez();
+	bool PendingDeRez();
 
 	glm::vec3 TransformRotation(const glm::vec3& Rot);
 	glm::vec3 InverseTransformRotation(const glm::vec3& Rot);

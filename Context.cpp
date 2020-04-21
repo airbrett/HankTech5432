@@ -42,9 +42,9 @@ size_t Context::CreateTexture(const uint8_t* const Bytes, const std::size_t Len,
 
 	size_t Handle;
 	if (mTexHandMan.Rez(Handle))
-		mResources.push_back(Texture);
-	else
 		mResources[Handle] = Texture;
+	else
+		mResources.push_back(Texture); 
 
 	return Handle;
 }
@@ -59,9 +59,9 @@ std::size_t Context::CreateVertexBuffer(const Vertex* Verticies, const std::size
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Count, Verticies, GL_STATIC_DRAW);
 
 	if (mTexHandMan.Rez(Handle))
-		mResources.push_back(VBO);
-	else
 		mResources[Handle] = VBO;
+	else
+		mResources.push_back(VBO); 
 
 	return Handle;
 }
@@ -76,9 +76,9 @@ std::size_t Context::CreateIndexBuffer(const unsigned int* Indices, const std::s
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * Count, Indices, GL_STATIC_DRAW);
 
 	if (mTexHandMan.Rez(Handle))
-		mResources.push_back(IBO);
-	else
 		mResources[Handle] = IBO;
+	else
+		mResources.push_back(IBO); 
 
 	return Handle;
 }

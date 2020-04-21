@@ -22,7 +22,6 @@ add_executable(Async
 	Context.cpp
 	HandleHandler.h
 	HandleHandler.cpp
-	Instance.h
 	main.cpp
 	Map.h
 	Map.cpp

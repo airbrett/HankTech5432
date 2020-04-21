@@ -7,12 +7,14 @@
 #include <iostream>
 
 Thing::Thing() :
-	mRot()//,
-	//mBody(nullptr)
+	mRot(),
+	mDeRez(false)
 {
+	PhysicalHandle = INVALID_HANDLE;
+	Gfx.mVtx = INVALID_HANDLE;
+
 	Draw = true;
 	MatStale = true;
-	PhysicalHandle = std::numeric_limits<std::size_t>::max();
 }
 
 const glm::vec3& Thing::GetPos()
@@ -92,4 +94,14 @@ glm::vec3 Thing::TransformVector(const glm::vec3& Vec)
 glm::vec3 Thing::InverseTransformVector(const glm::vec3& Vec)
 {
 	return Vec * mRot;
+}
+
+void Thing::DeRez()
+{
+	mDeRez = true;
+}
+
+bool Thing::PendingDeRez()
+{
+	return mDeRez;
 }

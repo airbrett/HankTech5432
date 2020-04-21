@@ -1,29 +1,26 @@
 #pragma once
 #include "Thing.h"
 
+#include <memory>
 #include <vector>
 
 class RAM
 {
 private:
-	std::vector<Thing*>* mThings;
-	std::vector<Thing*> mRezed;
-	std::vector<size_t> mDeRez;
+	std::vector<std::shared_ptr<Thing>> mObjects;
 
 public:
-	RAM(std::vector<Thing*>* Things);
-	void DeRez(size_t Index);
-	
+	RAM();
 
 	template<typename T>
-	T* Rez()
+	std::shared_ptr<T> Rez()
 	{
-		T* ThingRez = new T;
+		std::shared_ptr<T> Obj = std::make_shared<T>();
 		
-		mRezed.emplace_back(ThingRez);
+		mObjects.push_back(Obj); 
 
-		return ThingRez;
+		return Obj;
 	}
 
-	void Update();
+	std::vector<std::shared_ptr<Thing>> GetObjects();
 };

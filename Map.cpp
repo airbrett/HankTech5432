@@ -9,11 +9,11 @@
 
 #include <lodepng.h>
 
-static void SetModel(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, Thing* T);
-static void LoadMesh(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, Thing* T);
-static void LoadTexture(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, Thing* T);
+static void SetModel(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T);
+static void LoadMesh(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T);
+static void LoadTexture(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T);
 
-void LoadMap(const boost::filesystem::path& Path, RAM& mem, std::shared_ptr<Context> Ctx, std::shared_ptr<Physics> Phy, std::vector<Thing*>& GfxComp)
+void LoadMap(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Physics> Phy, RAM& World)
 {
 	const boost::filesystem::path MapRoot = Path.parent_path();
 	boost::property_tree::ptree MapTree;
@@ -23,7 +23,7 @@ void LoadMap(const boost::filesystem::path& Path, RAM& mem, std::shared_ptr<Cont
 	{
 		if (Node.first == "thing")
 		{
-			Thing* T = mem.Rez<Thing>();
+			std::shared_ptr<Thing> T = World.Rez<Thing>();
 
 			const std::string Shape = Node.second.get("physics.shape", "");
 
@@ -40,7 +40,7 @@ void LoadMap(const boost::filesystem::path& Path, RAM& mem, std::shared_ptr<Cont
 
 			if (!Gfx.empty())
 			{
-				GfxComp.push_back(T);
+				//GfxComp.push_back(T);
 				SetModel(MapRoot / Gfx, Ctx, T);
 			}
 
@@ -61,7 +61,7 @@ void LoadMap(const boost::filesystem::path& Path, RAM& mem, std::shared_ptr<Cont
 }
 
 
-void SetModel(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, Thing* T)
+void SetModel(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T)
 {
 	boost::property_tree::ptree Model;
 	boost::filesystem::path Dir;
@@ -81,7 +81,7 @@ void SetModel(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx,
 
 }
 
-void LoadMesh(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, Thing* T)
+void LoadMesh(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T)
 {
 	std::vector<Vertex> Vtx;
 	std::vector<unsigned int> Indicies;
@@ -123,7 +123,7 @@ void LoadMesh(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx,
 	T->Gfx.mIdxCount = Indicies.size();
 }
 
-void LoadTexture(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, Thing* T)
+void LoadTexture(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T)
 {
 	std::vector<unsigned char> Bytes;
 	unsigned int W, H;
