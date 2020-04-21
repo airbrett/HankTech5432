@@ -16,7 +16,7 @@ int main(char* argv[], int argc)
 
 	std::shared_ptr<WindowHandler> Window = std::make_shared<WindowHandler>(1024, 768);
 	std::shared_ptr<Context> Ctx = std::make_shared<Context>(Window);
-	std::shared_ptr<Physics> Physicser = std::make_shared<Physics>(Inst, &Inst->Things);
+	std::shared_ptr<Physics> Physicser = std::make_shared<Physics>();
 	RAM Rammer(&Inst->Things);
 
 	std::vector<Thing*> GfxComp;
@@ -35,25 +35,28 @@ int main(char* argv[], int argc)
 
 	Inst->Camera = Plr;
 
-	Uint32 Time = SDL_GetTicks();
+	const double UPDATE_STEP = 1.0 / 60.0;
+	double Timer = Inst->Time.GetTime();
 
 	Inst->Time.Reset();
 
 	while (!Window->KeyDown(27))
 	{
-		const float Now = SDL_GetTicks();
-		const float dt = (Now - Time) / 1000.0f;
 		Inst->Time.Step();
-
-		Time = Now;
-
-		for (Thing* T : Inst->Things)
-			T->Update(dt);
 
 		Window->Update();
 
-		//Physics update
-		Physicser->Update();
+		//Fixed rate updates
+		while (Inst->Time.GetTime() > Timer + UPDATE_STEP)
+		{
+			Timer += UPDATE_STEP;
+
+			Physicser->Update(UPDATE_STEP);
+		}
+
+		for (Thing* T : Inst->Things)
+			T->Update(Inst->Time.GetDT());
+		
 
 		glm::vec3 Pos;
 

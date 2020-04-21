@@ -5,23 +5,16 @@ struct PhysicsInfo
 	b2Body* Body;
 };
 
-Physics::Physics(std::shared_ptr<Instance>& Inst, std::vector<Thing*>* Things) :
-	UPDATE_STEP(1.0f/60.0f),
-	mInst(Inst),
-	mPhysicsTime(0.0)
+Physics::Physics()
 {
 	b2Vec2 gravity(0.0f, 0.0f);
 
 	mWorld = new b2World(gravity);
 }
 
-void Physics::Update()
+void Physics::Update(const double dt)
 {
-	while (mInst->Time.GetTime() > mPhysicsTime + UPDATE_STEP)
-	{
-		mPhysicsTime += UPDATE_STEP;
-		mWorld->Step(UPDATE_STEP, 8, 3);
-	}
+	mWorld->Step(dt, 8, 3);
 }
 
 std::size_t Physics::CreateSquare(const float w, const float h, const float d)

@@ -14,7 +14,7 @@ void Player::Init(std::shared_ptr<WindowHandler>& Wnd, std::shared_ptr<Physics>&
 	MouseY = mWnd->MouseY();
 }
 
-void Player::Update(const float dt)
+void Player::Update(const double dt)
 {
 	const float SPD = 250.0f;
 	glm::vec3 Dir(0);

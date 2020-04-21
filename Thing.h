@@ -29,7 +29,7 @@ public:
 	void Turn(const glm::vec3& Rot);
 	void Move(const glm::vec3& Vec);
 	const glm::mat4& GetMatrix();
-	virtual void Update(const float dt) {}
+	virtual void Update(const double dt) {}
 	bool DoDraw();
 
 	glm::vec3 TransformRotation(const glm::vec3& Rot);

@@ -5,6 +5,7 @@ class Clock
 {
 private:
 	double mTime;
+	double mDT;
 	std::chrono::time_point<std::chrono::high_resolution_clock> mPoint;
 
 public:
@@ -13,4 +14,5 @@ public:
 	void Reset();
 	void Step();
 	double GetTime();
+	double GetDT();
 };

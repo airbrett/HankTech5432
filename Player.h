@@ -18,5 +18,5 @@ public:
 
 	void Init(std::shared_ptr<WindowHandler>& Wnd, std::shared_ptr<Physics>& Phy);
 
-	virtual void Update(const float dt);
+	virtual void Update(const double dt);
 };
