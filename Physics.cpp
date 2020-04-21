@@ -10,6 +10,7 @@ Physics::Physics()
 	b2Vec2 gravity(0.0f, 0.0f);
 
 	mWorld = new b2World(gravity);
+	mWorld->SetContactListener(this);
 }
 
 void Physics::Update(const double dt)
@@ -17,7 +18,16 @@ void Physics::Update(const double dt)
 	mWorld->Step(dt, 8, 3);
 }
 
-std::size_t Physics::CreateSquare(const float w, const float h, const float d)
+void Physics::BeginContact(b2Contact* contact)
+{
+	std::size_t A = reinterpret_cast<std::size_t>(contact->GetFixtureA()->GetBody()->GetUserData());
+	std::size_t B = reinterpret_cast<std::size_t>(contact->GetFixtureB()->GetBody()->GetUserData());
+
+	if (mCallback)
+		mCallback(A, B);
+}
+
+std::size_t Physics::CreateSquare(const float w, const float h, const float d/*, std::size_t data*/)
 {
 	b2FixtureDef FixDef;
 	b2BodyDef BodyDef;
@@ -27,6 +37,7 @@ std::size_t Physics::CreateSquare(const float w, const float h, const float d)
 	BodyDef.position.Set(w / 2, h / 2);
 
 	b2Body* Body = mWorld->CreateBody(&BodyDef);
+	//Body->SetUserData(reinterpret_cast<void*>(data));
 
 	Shape.SetAsBox(w, h);
 
@@ -43,7 +54,7 @@ std::size_t Physics::CreateSquare(const float w, const float h, const float d)
 	return Handle;
 }
 
-std::size_t Physics::CreateCircle(const float r, const float d)
+std::size_t Physics::CreateCircle(const float r, const float d/*, std::size_t data*/)
 {
 	std::size_t Handle;
 	b2BodyDef BodyDef;
@@ -55,6 +66,7 @@ std::size_t Physics::CreateCircle(const float r, const float d)
 	//BodyDef.fixedRotation = true;
 
 	b2Body* Body = mWorld->CreateBody(&BodyDef);
+	//Body->SetUserData(reinterpret_cast<void*>(data));
 
 	b2CircleShape Shape;
 	Shape.m_radius = r;
@@ -137,3 +149,8 @@ void Physics::ApplyThingForce(Thing* Thg, const float x, const float z)
 	Body->SetLinearVelocity({ x,z });
 }
 */
+
+void Physics::SetCollisionHandler(const std::function<void(std::size_t, std::size_t)>& Func)
+{
+	mCallback = Func;
+}
