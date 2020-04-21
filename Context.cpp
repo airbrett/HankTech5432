@@ -27,13 +27,13 @@ void Context::Init()
 	glEnable(GL_TEXTURE_2D);
 }
 
-size_t Context::CreateTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height)
+size_t Context::CreateTexture(const uint8_t* const Bytes, const std::size_t Len, const std::size_t Width, const std::size_t Height)
 {
 	GLuint Texture;
 	glGenTextures(1, &Texture);
 	glBindTexture(GL_TEXTURE_2D, Texture);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Bytes);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(Width), static_cast<GLsizei>(Height), 0, GL_RGBA, GL_UNSIGNED_BYTE, Bytes);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -129,5 +129,5 @@ void Context::SetTex(const std::size_t Tex)
 
 void Context::Submit(const std::size_t Count)
 {
-	glDrawElements(GL_TRIANGLES, Count, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(Count), GL_UNSIGNED_INT, nullptr);
 }

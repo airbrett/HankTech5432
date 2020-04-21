@@ -32,7 +32,7 @@ public:
 
 	std::size_t CreateVertexBuffer(const Vertex* Verticies, const std::size_t Count);
 	std::size_t CreateIndexBuffer(const unsigned int* Indices, const std::size_t Count);
-	size_t CreateTexture(const uint8_t* const Bytes, const size_t Len, const size_t Width, const size_t Height);
+	size_t CreateTexture(const uint8_t* const Bytes, const std::size_t Len, const std::size_t Width, const std::size_t Height);
 
 	void Clear();
 	void SetProj(const glm::mat4& Proj);
