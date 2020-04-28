@@ -14,6 +14,7 @@ namespace Commands
 		SetVtx,
 		SetIdx,
 		SetTex,
+		SetProg,
 		Submit
 	};
 }
@@ -72,6 +73,12 @@ public:
 		mCmds.emplace(Tex);
 	}
 
+	void SetProgram(const std::size_t Prog)
+	{
+		mCmds.emplace(Commands::SetProg);
+		mCmds.emplace(Prog);
+	}
+
 	void Submit(const std::size_t Count)
 	{
 		mCmds.emplace(Commands::Submit);
@@ -120,6 +127,13 @@ public:
 				mCmds.pop();
 
 				mDriver->SetTex(mCmds.front());
+				mCmds.pop();
+				break;
+
+			case Commands::SetProg:
+				mCmds.pop();
+
+				mDriver->SetProgram(mCmds.front());
 				mCmds.pop();
 				break;
 

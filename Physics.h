@@ -28,8 +28,8 @@ public:
 	//void AddThingSquare(Thing* Thg, const float w, const float h, const float d);
 	//void AddThingCircle(Thing* Thg, const float r, const float d);
 
-	std::size_t CreateSquare(const float w, const float h, const float d/*, std::size_t data*/);
-	std::size_t CreateCircle(const float r, const float d/*, std::size_t data*/);
+	std::size_t CreateSquare(const float w, const float h, const float d, const std::size_t data);
+	std::size_t CreateCircle(const float r, const float d, const std::size_t data);
 	bool GetPos(const std::size_t Body, glm::vec3& Out);
 
 	void SetPosition(const std::size_t Handle, const glm::vec3& Pos);

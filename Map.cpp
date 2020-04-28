@@ -9,6 +9,8 @@
 
 #include <lodepng.h>
 
+#include <map>
+
 static void SetModel(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T);
 static void LoadMesh(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T);
 static void LoadTexture(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, std::shared_ptr<Thing> T);
@@ -18,6 +20,8 @@ void LoadMap(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, 
 	const boost::filesystem::path MapRoot = Path.parent_path();
 	boost::property_tree::ptree MapTree;
 	boost::property_tree::read_info(Path.string(), MapTree);
+	std::map<std::string, std::size_t> Shaders;
+	std::string ShaderSource;
 
 	for (boost::property_tree::ptree::value_type& Node : MapTree)
 	{
@@ -32,7 +36,7 @@ void LoadMap(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, 
 				if (Shape == "square")
 				{
 					const float size = Node.second.get<float>("physics.shape.size");
-					T->PhysicalHandle = Phy->CreateSquare(size, size, size);
+					T->PhysicalHandle = Phy->CreateSquare(size, size, size, T->GetID());
 				}
 			}
 
@@ -40,7 +44,24 @@ void LoadMap(const boost::filesystem::path& Path, std::shared_ptr<Context> Ctx, 
 
 			if (!Gfx.empty())
 			{
-				//GfxComp.push_back(T);
+				boost::filesystem::path ShaderPath = MapRoot / Node.second.get<std::string>("graphics.shader");
+
+				std::map<std::string, std::size_t>::iterator Iter = Shaders.find(ShaderPath.string());
+
+				if (Iter == std::end(Shaders))
+				{
+					ShaderSource.resize(boost::filesystem::file_size(ShaderPath.string()));
+
+					std::ifstream File(ShaderPath.string(), std::ios_base::binary);
+					File.read(const_cast<char*>(ShaderSource.data()), ShaderSource.size());
+					File.close();
+
+					Shaders[ShaderPath.string()] = Ctx->CreateProgram(ShaderSource);
+					Iter = Shaders.insert({ ShaderPath.string(), Ctx->CreateProgram(ShaderSource) }).first;
+				}
+
+				T->Shader = Iter->second;
+
 				SetModel(MapRoot / Gfx, Ctx, T);
 			}
 

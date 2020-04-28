@@ -8,6 +8,8 @@
 #include "Map.h"
 #include "DeferredSubmitter.h"
 
+#include <boost/filesystem.hpp>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 int main(char* argv[], int argc)
@@ -21,11 +23,11 @@ int main(char* argv[], int argc)
 	LoadMap("Data\\map1.ht", Ctx, Physicser, World);
 
 	//DeferredSubmitter<Context> DefSub(Ctx.get());
-
+	
 	std::shared_ptr<Player> Plr = World.Rez<Player>();
 
 	Plr->Init(Window, Physicser);
-	Plr->PhysicalHandle = Physicser->CreateCircle(0.2f, 1.0f);
+	Plr->PhysicalHandle = Physicser->CreateCircle(0.2f, 1.0f, Plr->GetID());
 	Physicser->SetPosition(Plr->PhysicalHandle, { 0,0,-20 });
 
 	const double UPDATE_STEP = 1.0 / 60.0;
@@ -99,6 +101,7 @@ int main(char* argv[], int argc)
 		{
 			if (T->Gfx.mVtx != Thing::INVALID_HANDLE)
 			{
+				Ctx->SetProgram(T->Shader);
 				Ctx->SetModelView(View * T->GetMatrix());
 				Ctx->SetVertexBuffer(T->Gfx.mVtx);
 				Ctx->SetIndexBuffer(T->Gfx.mIdx);

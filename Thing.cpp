@@ -105,3 +105,13 @@ bool Thing::PendingDeRez()
 {
 	return mDeRez;
 }
+
+void Thing::SetID(const std::size_t ID)
+{
+	mID = ID;
+}
+
+std::size_t Thing::GetID()
+{
+	return mID;
+}

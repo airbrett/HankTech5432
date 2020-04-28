@@ -11,12 +11,14 @@ protected:
 	bool Draw;
 	bool MatStale;
 	bool mDeRez;
+	std::size_t mID;
 
 public:
 	static const std::size_t INVALID_HANDLE = std::numeric_limits<std::size_t>::max();
 
 	Thing();
 
+	std::size_t Shader;
 	std::size_t PhysicalHandle;
 	struct
 	{
@@ -36,6 +38,8 @@ public:
 	bool DoDraw();
 	void DeRez();
 	bool PendingDeRez();
+	void SetID(const std::size_t ID);
+	std::size_t GetID();
 
 	glm::vec3 TransformRotation(const glm::vec3& Rot);
 	glm::vec3 InverseTransformRotation(const glm::vec3& Rot);

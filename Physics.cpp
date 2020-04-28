@@ -20,14 +20,14 @@ void Physics::Update(const double dt)
 
 void Physics::BeginContact(b2Contact* contact)
 {
-	std::size_t A = reinterpret_cast<std::size_t>(contact->GetFixtureA()->GetBody()->GetUserData());
-	std::size_t B = reinterpret_cast<std::size_t>(contact->GetFixtureB()->GetBody()->GetUserData());
+	const std::size_t IDA = reinterpret_cast<std::size_t>(contact->GetFixtureA()->GetBody()->GetUserData());
+	const std::size_t IDB = reinterpret_cast<std::size_t>(contact->GetFixtureB()->GetBody()->GetUserData());
 
 	if (mCallback)
-		mCallback(A, B);
+		mCallback(IDA, IDB);
 }
 
-std::size_t Physics::CreateSquare(const float w, const float h, const float d/*, std::size_t data*/)
+std::size_t Physics::CreateSquare(const float w, const float h, const float d, const std::size_t data)
 {
 	b2FixtureDef FixDef;
 	b2BodyDef BodyDef;
@@ -37,7 +37,7 @@ std::size_t Physics::CreateSquare(const float w, const float h, const float d/*,
 	BodyDef.position.Set(w / 2, h / 2);
 
 	b2Body* Body = mWorld->CreateBody(&BodyDef);
-	//Body->SetUserData(reinterpret_cast<void*>(data));
+	Body->SetUserData(reinterpret_cast<void*>(data));
 
 	Shape.SetAsBox(w, h);
 
@@ -54,7 +54,7 @@ std::size_t Physics::CreateSquare(const float w, const float h, const float d/*,
 	return Handle;
 }
 
-std::size_t Physics::CreateCircle(const float r, const float d/*, std::size_t data*/)
+std::size_t Physics::CreateCircle(const float r, const float d, const std::size_t data)
 {
 	std::size_t Handle;
 	b2BodyDef BodyDef;
@@ -66,7 +66,7 @@ std::size_t Physics::CreateCircle(const float r, const float d/*, std::size_t da
 	//BodyDef.fixedRotation = true;
 
 	b2Body* Body = mWorld->CreateBody(&BodyDef);
-	//Body->SetUserData(reinterpret_cast<void*>(data));
+	Body->SetUserData(reinterpret_cast<void*>(data));
 
 	b2CircleShape Shape;
 	Shape.m_radius = r;
